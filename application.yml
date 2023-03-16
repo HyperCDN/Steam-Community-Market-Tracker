@@ -1,0 +1,37 @@
+# user specifiable configurations go here
+
+steam-community-market-tracker:
+  currency: 3
+  market-search-delay: 15s
+  market-price-overview-delay: 4s
+  entity-lookup:
+    app:
+      on-startup: false
+      on-cron: false
+      cron: 0 0 0 * * *
+      track-by-default: false
+      delete-not-found-entities: false
+    market-item:
+      on-startup: true
+      on-cron: false
+      cron: 0 30 0 * * *
+      track-by-default: false
+      disable-tracking-on-empty-response: true
+      delete-not-found-entities: false
+    market-item-price-overview:
+      on-startup: false
+      on-cron: false
+      cron: 0 30 0 * * *
+
+
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scmt
+    username: scmt
+    password: scmtsupersecret
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

@@ -1,0 +1,33 @@
+# internal configurations go here
+
+spring:
+  application:
+    name: "SteamCommunityMarketTracker"
+  config:
+    additional-location: "file:./,file:./config/"
+  mvc:
+    throw-exception-if-no-handler-found: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 4
+      maximum-pool-size: 16
+      idle-timeout: 30000
+      pool-name: "SteamCommunityMarketTracker-CP"
+      max-lifetime: 2000000
+      connection-timeout: 30000
+  flyway:
+    enabled: true
+
+server:
+  port: 9090
+  error:
+    whitelabel:
+      enabled: false
+  servlet:
+    context-path: "/api"
+springdoc:
+  api-docs:
+    path: "/docs/openapi"
+  swagger-ui:
+    path: "/docs/swagger-ui"
