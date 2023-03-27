@@ -1,5 +1,6 @@
 package de.hypercdn.scmt.entities.json
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -13,6 +14,7 @@ class MarketSnapshotJson(
 
     @JsonProperty("timestamp")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     var timestamp: OffsetDateTime? = null
 
     @JsonProperty("availability")

@@ -29,13 +29,15 @@ fun sleepWithoutException(unit: TimeUnit, value: Long) {
 }
 
 fun parseNumberWithDecorations(string: String): Number {
-    val a = NumberFormat.getNumberInstance(Locale.US).parse(string).toDouble()
-    val b = NumberFormat.getNumberInstance(Locale.GERMAN).parse(string).toDouble()
-    return if (string.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\,_]?[0-9]{3})*(?:\\.[0-9]{1,2})?\$"))) {
-        a
-    } else if (string.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\._]?[0-9]{3})*(?:\\,[0-9]{1,2})?\$"))) {
-        b
+    var numString = string.replace("-", "0")
+    if(numString.endsWith(".") || numString.endsWith(",")) {
+        numString = numString.dropLast(1)
+    }
+    return if (numString.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\,_]?[0-9]{3})*(?:\\.[0-9]{1,2})?\$"))) {
+        NumberFormat.getNumberInstance(Locale.US).parse(numString).toDouble()
+    } else if (numString.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\._]?[0-9]{3})*(?:\\,[0-9]{1,2})?\$"))) {
+        NumberFormat.getNumberInstance(Locale.GERMAN).parse(numString).toDouble()
     } else {
-        string.toDouble()
+        numString.toDouble()
     }
 }
