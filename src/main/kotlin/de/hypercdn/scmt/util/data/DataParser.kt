@@ -10,7 +10,10 @@ fun parseCurrencyToNumber(string: String): Pair<Number?, String?> {
         .filter { it != null && string.contains(it.symbol) }
         .distinctBy { it!!.currencyCode }
         .toList()
-    val cleaned = string.replace(Regex("[^0-9,\\._]"), "")
+    var cleaned = string
+        .replace("-", "0")
+        .replace(Regex("[^0-9,\\._]"), "");
+    if(cleaned.endsWith(".") || cleaned.endsWith(",")) cleaned = cleaned.dropLast(1)
     return parseNumberWithDecorations(cleaned) to detectedCurrencies.get(0)?.currencyCode
 
 }
@@ -29,15 +32,11 @@ fun sleepWithoutException(unit: TimeUnit, value: Long) {
 }
 
 fun parseNumberWithDecorations(string: String): Number {
-    var numString = string.replace("-", "0")
-    if(numString.endsWith(".") || numString.endsWith(",")) {
-        numString = numString.dropLast(1)
-    }
-    return if (numString.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\,_]?[0-9]{3})*(?:\\.[0-9]{1,2})?\$"))) {
-        NumberFormat.getNumberInstance(Locale.US).parse(numString).toDouble()
-    } else if (numString.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\._]?[0-9]{3})*(?:\\,[0-9]{1,2})?\$"))) {
-        NumberFormat.getNumberInstance(Locale.GERMAN).parse(numString).toDouble()
+    return if (string.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\,_]?[0-9]{3})*(?:\\.[0-9]{1,2})?\$"))) {
+        NumberFormat.getNumberInstance(Locale.US).parse(string).toDouble()
+    } else if (string.matches(Regex("^[+-]?[0-9]{1,3}(?:[\\._]?[0-9]{3})*(?:\\,[0-9]{1,2})?\$"))) {
+        NumberFormat.getNumberInstance(Locale.GERMAN).parse(string).toDouble()
     } else {
-        numString.toDouble()
+        string.toDouble()
     }
 }
