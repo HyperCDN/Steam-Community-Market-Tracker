@@ -3,6 +3,7 @@ package de.hypercdn.scmt.entities.json
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
 
 class MarketItemJson (
@@ -25,6 +26,10 @@ class MarketItemJson (
     @JsonProperty("snapshots")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var history: List<MarketSnapshotJson>? = null
+
+    @JsonProperty("statistics")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var statistics: JsonNode? = null
 
     init {
         app = AppJson(marketItem.app)

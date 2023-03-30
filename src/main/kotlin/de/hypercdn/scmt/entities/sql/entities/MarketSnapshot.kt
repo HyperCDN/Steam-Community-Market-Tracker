@@ -3,9 +3,8 @@ package de.hypercdn.scmt.entities.sql.entities
 import jakarta.persistence.*
 import jakarta.persistence.Table
 import org.hibernate.annotations.*
-
 import java.time.OffsetDateTime
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "market_snapshots")
@@ -95,6 +94,7 @@ class MarketSnapshot {
     @Embedded
     lateinit var price: Price
 
+    @Embeddable
     class Price {
 
         @Column(
