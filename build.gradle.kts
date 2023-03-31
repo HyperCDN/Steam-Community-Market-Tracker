@@ -58,11 +58,11 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 
-	implementation("org.springframework.boot:spring-boot-starter-aop:3.0.1")
+	implementation("org.springframework.boot:spring-boot-starter-aop:3.0.2")
 
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.14.1")
-	implementation("com.fasterxml.jackson.core:jackson-core:2.14.1")
-	implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.1")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+	implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
+	implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

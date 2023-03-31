@@ -35,11 +35,11 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
 
     @Query(
         """
-        SELECT "min", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MIN(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
+        SELECT "min", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MIN(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
         UNION
-        SELECT "avg", cast(AVG(snapshot.price.lowestPrice) as double), cast(null as localdatetime) FROM MarketSnapshot snapshot
+        SELECT "avg", cast(AVG(snapshot.price.lowestPrice) as double), cast(null as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot
         UNION 
-        SELECT "max", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MAX(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
+        SELECT "max", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MAX(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
     """
     )
     fun getStatisticsBetween(

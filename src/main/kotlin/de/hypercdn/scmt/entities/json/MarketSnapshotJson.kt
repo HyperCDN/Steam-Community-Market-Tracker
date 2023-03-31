@@ -14,7 +14,7 @@ class MarketSnapshotJson(
 
     @JsonProperty("timestamp")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     var timestamp: OffsetDateTime? = null
 
     @JsonProperty("availability")
