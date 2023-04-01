@@ -14,54 +14,29 @@ class MarketSnapshot {
 
     @Id
     @Column(
-        name = "market_snapshot_id",
+        name = "market_snapshot_uuid",
         nullable = false,
         updatable = false
     )
     @GeneratedValue
     @Generated(GenerationTime.INSERT)
-    lateinit var id: UUID
+    lateinit var __uuid: UUID
 
     @Column(
-        name = "app_id",
-        nullable = false,
-        updatable = false
-    )
-    var appId: Int = -1
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-        name = "app_id",
-        referencedColumnName = "app_id",
-        insertable = false,
-        updatable = false
-    )
-    lateinit var app: App
-
-    @Column(
-        name = "market_hash_name",
+        name = "market_item_uuid",
         nullable = false,
         updatable = false
     )
     lateinit var name: String
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns(value = [
-        JoinColumn(
-            name = "app_id",
-            referencedColumnName = "app_id",
-            updatable = false,
-            insertable = false
-        ),
-        JoinColumn(
-            name = "market_hash_name",
-            referencedColumnName = "market_hash_name",
-            updatable = false,
-            insertable = false
-        )
-    ])
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+        name = "market_item_uuid",
+        referencedColumnName = "market_item_uuid",
+        updatable = false,
+        insertable = false
+    )
     lateinit var marketItem: MarketItem
-
 
     @Column(
         name = "created_at",

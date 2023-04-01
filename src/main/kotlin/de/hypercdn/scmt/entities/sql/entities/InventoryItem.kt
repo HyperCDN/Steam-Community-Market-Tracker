@@ -7,14 +7,14 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-@Table(name = "market_items")
+@Table(name = "inventory_items")
 @DynamicInsert
 @DynamicUpdate
-class MarketItem {
+class InventoryItem {
 
     @Id
     @Column(
-        name = "market_item_uuid",
+        name = "inventory_items_uuid",
         nullable = false,
         updatable = false
     )
@@ -23,39 +23,43 @@ class MarketItem {
     lateinit var __uuid: UUID
 
     @Column(
-        name = "app_uuid",
+        name = "user_inventory_uuid",
         nullable = false,
         updatable = false
     )
-    lateinit var appUUID: UUID
+    lateinit var userInventoryUUID: UUID
 
-    @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
-        name = "app_uuid",
-        referencedColumnName = "app_uuid",
+        name = "user_inventory_uuid",
+        referencedColumnName = "user_inventory_uuid",
         insertable = false,
         updatable = false
     )
-    lateinit var app: App
+    lateinit var userInventory: UserInventory
 
     @Column(
-        name = "context_id",
-    )
-    var contextId: Long? = null
-
-    @Column(
-        name = "asset_id",
-    )
-    var assetId: Long? = null
-
-    @Id
-    @Column(
-        name = "market_hash_name",
+        name = "market_item_uuid",
         nullable = false,
         updatable = false
     )
-    lateinit var name: String
+    lateinit var marketItemUUID: UUID
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+        name = "market_item_uuid",
+        referencedColumnName = "market_item_uuid",
+        insertable = false,
+        updatable = false
+    )
+    lateinit var marketItem: MarketItem
+
+    @Column(
+        name = "amount",
+        nullable = false,
+        updatable = false
+    )
+    var amount: Int = 0
 
     @Column(
         name = "created_at",
@@ -67,17 +71,17 @@ class MarketItem {
     lateinit var createdAt: OffsetDateTime
 
     @Column(
-        name = "tracked",
-        nullable = false
-    )
-    @ColumnDefault("FALSE")
-    var tracked: Boolean = false
-
-    @Column(
-        name = "last_item_scan",
+        name = "superseded",
         nullable = false
     )
     @ColumnDefault("NULL")
-    lateinit var lastItemScan: OffsetDateTime
+    lateinit var superseded: OffsetDateTime
+
+    @Column(
+        name = "automaticFetched",
+        nullable = false,
+        updatable = false
+    )
+    var automaticFetched: Boolean = true
 
 }
