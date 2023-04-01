@@ -15,18 +15,6 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
         FROM MarketSnapshot snapshot
         WHERE snapshot.marketItem = :item
         ORDER BY snapshot.createdAt DESC
-        LIMIT 1
-    """
-    )
-    fun getLatestFor(
-        @Param("item") item: MarketItem
-    ): MarketSnapshot
-
-    @Query(
-        """
-        FROM MarketSnapshot snapshot
-        WHERE snapshot.marketItem = :item
-        ORDER BY snapshot.createdAt DESC
     """
     )
     fun getAllFor(

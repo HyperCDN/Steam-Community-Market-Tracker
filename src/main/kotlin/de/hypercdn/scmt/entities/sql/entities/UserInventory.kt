@@ -7,14 +7,14 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-@Table(name = "market_items")
+@Table(name = "user_inventories")
 @DynamicInsert
 @DynamicUpdate
-class MarketItem {
+class UserInventory {
 
     @Id
     @Column(
-        name = "market_item_uuid",
+        name = "user_inventory_uuid",
         nullable = false,
         updatable = false
     )
@@ -23,13 +23,19 @@ class MarketItem {
     lateinit var __uuid: UUID
 
     @Column(
+        name = "user_id",
+        nullable = false,
+        updatable = false
+    )
+    var userId: Long = -1
+
+    @Column(
         name = "app_uuid",
         nullable = false,
         updatable = false
     )
     lateinit var appUUID: UUID
 
-    @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "app_uuid",
@@ -38,24 +44,6 @@ class MarketItem {
         updatable = false
     )
     lateinit var app: App
-
-    @Column(
-        name = "context_id",
-    )
-    var contextId: Long? = null
-
-    @Column(
-        name = "asset_id",
-    )
-    var assetId: Long? = null
-
-    @Id
-    @Column(
-        name = "market_hash_name",
-        nullable = false,
-        updatable = false
-    )
-    lateinit var name: String
 
     @Column(
         name = "created_at",

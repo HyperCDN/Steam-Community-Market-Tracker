@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
-import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 @Component
@@ -134,9 +133,21 @@ class SteamFetchService @Autowired constructor(
         }
     }
 
+    fun retrieveMarketItemsFrom(appId: Int, userId: Int, count: Int = 5000, language: String = "english") {
+        val request = Request.Builder()
+            .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
+            .build()
+        okHttpClient.newCall(request).execute().use {
+            if (!it.isSuccessful) {
+                throw HttpFetchException(it.code, "Failed to fetch url ${request.url}")
+            }
+            return objectMapper.readTree(it.body?.string())
+        }
+    }
+
     class HttpFetchException(
         var code: Int,
         override var message: String? = "${code}: No Message Provided"
-    ): RuntimeException("${code}: $message")
+    ) : RuntimeException("${code}: $message")
 
 }

@@ -1,14 +1,10 @@
 package de.hypercdn.scmt.entities.sql.entities
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import jakarta.persistence.Table
-import org.hibernate.annotations.ColumnDefault
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.DynamicInsert
-import org.hibernate.annotations.DynamicUpdate
+import org.hibernate.annotations.*
 import java.time.OffsetDateTime
+import java.util.*
 
 @Entity
 @Table(name = "apps")
@@ -17,6 +13,16 @@ import java.time.OffsetDateTime
 class App {
 
     @Id
+    @Column(
+        name = "app_uuid",
+        nullable = false,
+        updatable = false
+    )
+    @GeneratedValue
+    @Generated(GenerationTime.INSERT)
+    lateinit var __uuid: UUID
+
+
     @Column(
         name = "app_id",
         nullable = false,
@@ -46,5 +52,12 @@ class App {
     )
     @ColumnDefault("FALSE")
     var tracked: Boolean = false
+
+    @Column(
+        name = "last_item_scan",
+        nullable = false
+    )
+    @ColumnDefault("NULL")
+    lateinit var lastItemScan: OffsetDateTime
 
 }

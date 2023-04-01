@@ -7,12 +7,20 @@ import de.hypercdn.scmt.entities.sql.entities.MarketItem
 
 class MarketItemJson (
     @JsonIgnore
-    var marketItem: MarketItem
+    val marketItem: MarketItem
 ) {
 
     @JsonProperty("app")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var app: AppJson? = null
+
+    @JsonProperty("context_id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var contextId: Long? = null
+
+    @JsonProperty("asset_id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var assetId: Long? = null
 
     @JsonProperty("market_hash_name")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,6 +40,8 @@ class MarketItemJson (
 
     init {
         app = AppJson(marketItem.app)
+        contextId = marketItem.contextId
+        assetId = marketItem.assetId
         name = marketItem.name
         tracked = marketItem.tracked
     }

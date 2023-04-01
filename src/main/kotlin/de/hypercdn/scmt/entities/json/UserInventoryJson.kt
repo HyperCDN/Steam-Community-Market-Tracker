@@ -1,31 +1,24 @@
 package de.hypercdn.scmt.entities.json
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import de.hypercdn.scmt.entities.sql.entities.App
+import de.hypercdn.scmt.entities.sql.entities.UserInventory
 
-class AppJson (
-    @JsonIgnore
-    val app: App
+class UserInventoryJson(
+    val userInventory: UserInventory
 ) {
 
-    @JsonProperty("app_id")
+    @JsonProperty("app")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var id: Int? = null
+    var app: AppJson? = null
 
-    @JsonProperty("app_name")
+    @JsonProperty("user_id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var name: String? = null
+    var userId: Long? = null
 
     @JsonProperty("is_tracked")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var tracked: Boolean? = null
 
-    init {
-        id = app.id
-        name = app.name
-        tracked = app.tracked
-    }
 
 }
