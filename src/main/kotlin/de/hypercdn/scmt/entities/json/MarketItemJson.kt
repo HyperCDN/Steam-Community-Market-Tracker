@@ -59,4 +59,13 @@ class MarketItemJson (
         return this
     }
 
+    fun includeProperties(skip: Boolean = false): MarketItemJson {
+        if (marketItem == null || skip) return this
+        properties = Properties().apply {
+            tracked = marketItem.tracked
+            lastItemScan = marketItem.lastItemScan
+        }
+        return this
+    }
+
 }

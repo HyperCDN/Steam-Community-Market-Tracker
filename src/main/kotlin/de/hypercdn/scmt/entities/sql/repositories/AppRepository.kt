@@ -14,7 +14,7 @@ interface AppRepository : CrudRepository<App, UUID> {
         """
         FROM App app
         WHERE app.tracked = true
-        AND app.lastItemScan is null OR app.lastItemScan + :scanDelayDuration < NOW()
+        AND app.lastItemScan is null OR app.lastItemScan < (Now() - :scanDelayDuration)
     """
     )
     fun getAllAppsDueToItemScan(

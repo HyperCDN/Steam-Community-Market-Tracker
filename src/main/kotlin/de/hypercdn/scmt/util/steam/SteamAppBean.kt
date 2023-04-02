@@ -61,7 +61,7 @@ class SteamAppBean @Autowired constructor(
                 }
             }
             val updated = appRepository.saveAll(appsFromDb.filter { updateDbSet.contains(it.id) && it.name != githubAppMap.get(it.id)?.get("name")?.asText() })
-            log.debug("Updated {} apps", updated.count())
+            log.info("Updated {} apps", updated.count())
             // add new
             val added = appRepository.saveAll(appsFromGithub.filter { addToDbSet.contains(it.get("app-id").asInt()) }.map {
                 App().apply {
@@ -70,11 +70,11 @@ class SteamAppBean @Autowired constructor(
                     tracked = appConfig.trackNewByDefault
                 }
             })
-            log.debug("Added {} apps", added.count())
+            log.info("Added {} apps", added.count())
             // delete removed
             if (appConfig.deleteNotFoundApp) {
                 val deleted = appRepository.deleteAppByAppIds(removeFromDbSet)
-                log.debug("Deleted {} apps", deleted)
+                log.info("Deleted {} apps", deleted)
             }
             log.info("Update finished")
         }catch (e: Exception) {

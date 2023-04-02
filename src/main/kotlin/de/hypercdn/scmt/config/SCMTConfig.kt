@@ -29,7 +29,7 @@ class AppConfig {
     var cron: String = Scheduled.CRON_DISABLED
 
     var trackNewByDefault: Boolean = false
-    var untrackOnNotFoundItems: Boolean = true
+    var untrackOnNoFoundItems: Boolean = true
     var deleteNotFoundApp: Boolean = false
 }
 

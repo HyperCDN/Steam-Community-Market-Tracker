@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import de.hypercdn.scmt.entities.sql.entities.InventoryItem
+import de.hypercdn.scmt.entities.sql.entities.MarketItem
+import de.hypercdn.scmt.entities.sql.entities.UserInventory
 import java.time.OffsetDateTime
 
 class InventoryItemJson(
@@ -19,6 +21,10 @@ class InventoryItemJson(
     @JsonProperty("item")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var item: MarketItemJson? = null
+
+    @JsonProperty("properties")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var properties: Properties? = null
 
     class Properties {
 
@@ -36,6 +42,28 @@ class InventoryItemJson(
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         var superseded: OffsetDateTime? = null
 
+    }
+
+    fun includeInventory(skip: Boolean = false, inventoryProvider: ((app: UserInventory) -> UserInventoryJson?)? = null): InventoryItemJson {
+        if (inventoryItem == null || skip) return this
+        inventory = inventoryProvider?.invoke(inventoryItem.userInventory)
+        return this
+    }
+
+    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): InventoryItemJson {
+        if (inventoryItem == null || skip) return this
+        item = itemProvider?.invoke(inventoryItem.marketItem)
+        return this
+    }
+
+    fun includeProperties(skip: Boolean = false): InventoryItemJson {
+        if (inventoryItem == null || skip) return this
+        properties = Properties().apply {
+            amount = inventoryItem.amount
+            createdAt = inventoryItem.createdAt
+            superseded = inventoryItem.superseded
+        }
+        return this
     }
 
 
