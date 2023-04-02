@@ -1,7 +1,7 @@
 package de.hypercdn.scmt.util.steam
 
-import de.hypercdn.scmt.config.SCMTItemPriceSearchConfig
-import de.hypercdn.scmt.config.SCMTItemSearchConfig
+import de.hypercdn.scmt.config.ItemPriceSearchConfig
+import de.hypercdn.scmt.config.ItemSearchConfig
 import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
@@ -24,8 +24,8 @@ class SteamMarketItemPriceBean @Autowired constructor(
     var marketItemRepository: MarketItemRepository,
     var marketSnapshotRepository: MarketSnapshotRepository,
     var steamFetchService: SteamFetchService,
-    var itemSearchConfig: SCMTItemSearchConfig,
-    var itemPriceSearchConfig: SCMTItemPriceSearchConfig
+    var itemSearchConfig: ItemSearchConfig,
+    var itemPriceSearchConfig: ItemPriceSearchConfig
 ) {
 
     var log: Logger = LoggerFactory.getLogger(SteamMarketItemPriceBean::class.java)
@@ -55,13 +55,13 @@ class SteamMarketItemPriceBean @Autowired constructor(
             appRepository.getAllTrackedApps()
                 .forEach { app ->
                     marketItemRepository.getMarketItemsDueToItemScan(app, itemPriceSearchConfig.noUpdateBefore)
-                        .forEach { marketItem ->
+                        .forEach inner@{ marketItem ->
                             val priceOverview = try {
                                 steamFetchService.retrievePriceOverviewFromSteam(app.id, marketItem.name)
                             } catch (e: SteamFetchService.HttpFetchException) {
                                 if (e.code == 404 && itemSearchConfig.disableNotFoundEntities) {
                                     marketItemRepository.save(marketItem.apply { tracked = false })
-                                    return@forEach
+                                    return@inner
                                 }
                                 throw e
                             }

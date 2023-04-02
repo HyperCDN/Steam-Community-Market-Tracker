@@ -12,7 +12,7 @@ interface InventoryItemRepository : CrudRepository<InventoryItem, UUID> {
     @Query(
         """
         FROM InventoryItem item
-        WHERE item.userInventory = :user
+        WHERE item.userInventory = :inventory
             AND item.superseded is null
     """
     )

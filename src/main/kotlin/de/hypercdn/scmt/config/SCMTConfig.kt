@@ -7,7 +7,7 @@ import java.time.Duration
 
 @Configuration
 @ConfigurationProperties(prefix = "steam-community-market-tracker.misc")
-class SCMTMiscConfig {
+class MiscConfig {
     var currency: Int = 3
     var currencyName: String = "EUR"
 }
@@ -15,7 +15,7 @@ class SCMTMiscConfig {
 
 @Configuration
 @ConfigurationProperties(prefix = "steam-community-market-tracker.rate-limits")
-class SCMTRateLimitConfig {
+class RateLimitConfig {
     var marketItemSearch: Duration = Duration.ZERO
     var marketItemPriceSearch: Duration = Duration.ZERO
     var marketInventorySearch: Duration = Duration.ZERO
@@ -23,7 +23,7 @@ class SCMTRateLimitConfig {
 
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.app-search")
-class SCMTAppConfig {
+class AppConfig {
     var updateOnStartup: Boolean = false
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
@@ -35,7 +35,7 @@ class SCMTAppConfig {
 
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.item-search")
-class SCMTItemSearchConfig {
+class ItemSearchConfig {
     var updateOnStartup: Boolean = false
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
@@ -48,7 +48,7 @@ class SCMTItemSearchConfig {
 
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.item-price-search")
-class SCMTItemPriceSearchConfig {
+class ItemPriceSearchConfig {
     var updateOnStartup: Boolean = false
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
@@ -57,7 +57,7 @@ class SCMTItemPriceSearchConfig {
 
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.inventory-search")
-class SCMTInventorySearchConfig {
+class InventorySearchConfig {
     var onStartup: Boolean = false
     var onCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
