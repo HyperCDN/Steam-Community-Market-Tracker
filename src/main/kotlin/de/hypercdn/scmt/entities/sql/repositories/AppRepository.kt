@@ -1,6 +1,7 @@
 package de.hypercdn.scmt.entities.sql.repositories
 
 import de.hypercdn.scmt.entities.sql.entities.App
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -38,6 +39,7 @@ interface AppRepository : CrudRepository<App, UUID> {
         @Param("appId") appId: Int
     ): App?
 
+    @Modifying
     @Query(
         """
         DELETE FROM App app
@@ -46,6 +48,6 @@ interface AppRepository : CrudRepository<App, UUID> {
     )
     fun deleteAppByAppIds(
         @Param("appIds") appIds: Collection<Int>
-    )
+    ): Int
 
 }

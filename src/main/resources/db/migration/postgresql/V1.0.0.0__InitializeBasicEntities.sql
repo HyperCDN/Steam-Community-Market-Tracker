@@ -2,8 +2,6 @@ START TRANSACTION;
 
 -- uuid extensions to handle uuid types
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
--- trgm to calculate proximity on strings
-CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 CREATE TABLE apps
 (
@@ -16,7 +14,7 @@ CREATE TABLE apps
     tracked        BOOLEAN   NOT NULL,
     last_item_scan TIMESTAMP          DEFAULT NULL,
 
-    PRIMARY KEY (app_id),
+    PRIMARY KEY (app_uuid),
     UNIQUE (app_id)
 );
 
@@ -31,7 +29,7 @@ CREATE TABLE market_items
 
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     tracked          BOOLEAN   NOT NULL,
-    last_item_scan   timestamp          DEFAULT NULL,
+    last_item_scan   TIMESTAMP          DEFAULT NULL,
 
     PRIMARY KEY (market_item_uuid),
     UNIQUE (app_uuid, context_id, asset_id),

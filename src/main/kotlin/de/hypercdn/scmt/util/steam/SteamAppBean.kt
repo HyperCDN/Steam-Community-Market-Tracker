@@ -1,6 +1,6 @@
 package de.hypercdn.scmt.util.steam
 
-import de.hypercdn.scmt.config.SCMTAppConfig
+import de.hypercdn.scmt.config.AppConfig
 import de.hypercdn.scmt.entities.sql.entities.App
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Component
 class SteamAppBean @Autowired constructor(
     var steamFetchService: SteamFetchService,
-    var appConfig: SCMTAppConfig,
+    var appConfig: AppConfig,
     var appRepository: AppRepository
 ) {
 
@@ -60,18 +60,21 @@ class SteamAppBean @Autowired constructor(
                     appsFromDb.get(it).name = name
                 }
             }
-            appRepository.saveAll(appsFromDb.filter { updateDbSet.contains(it.id) && it.name != githubAppMap.get(it.id)?.get("name")?.asText() })
+            val updated = appRepository.saveAll(appsFromDb.filter { updateDbSet.contains(it.id) && it.name != githubAppMap.get(it.id)?.get("name")?.asText() })
+            log.debug("Updated {} apps", updated.count())
             // add new
-            appRepository.saveAll(appsFromGithub.filter { addToDbSet.contains(it.get("game-id").asInt()) }.map {
+            val added = appRepository.saveAll(appsFromGithub.filter { addToDbSet.contains(it.get("app-id").asInt()) }.map {
                 App().apply {
-                    id = it.get("game-id").asInt()
+                    id = it.get("app-id").asInt()
                     name = it.get("name").asText()
                     tracked = appConfig.trackNewByDefault
                 }
             })
+            log.debug("Added {} apps", added.count())
             // delete removed
             if (appConfig.deleteNotFoundApp) {
-                appRepository.deleteAppByAppIds(removeFromDbSet)
+                val deleted = appRepository.deleteAppByAppIds(removeFromDbSet)
+                log.debug("Deleted {} apps", deleted)
             }
             log.info("Update finished")
         }catch (e: Exception) {

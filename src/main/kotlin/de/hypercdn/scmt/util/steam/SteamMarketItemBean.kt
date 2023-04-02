@@ -1,8 +1,8 @@
 package de.hypercdn.scmt.util.steam
 
 import com.fasterxml.jackson.databind.JsonNode
-import de.hypercdn.scmt.config.SCMTAppConfig
-import de.hypercdn.scmt.config.SCMTItemSearchConfig
+import de.hypercdn.scmt.config.AppConfig
+import de.hypercdn.scmt.config.ItemSearchConfig
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
@@ -22,8 +22,8 @@ class SteamMarketItemBean @Autowired constructor(
     var appRepository: AppRepository,
     var marketItemRepository: MarketItemRepository,
     var steamFetchService: SteamFetchService,
-    var appSearchConfig: SCMTAppConfig,
-    var itemSearchConfig: SCMTItemSearchConfig
+    var appSearchConfig: AppConfig,
+    var itemSearchConfig: ItemSearchConfig
 ) {
 
     var log: Logger = LoggerFactory.getLogger(SteamMarketItemBean::class.java)

@@ -29,7 +29,6 @@ class MarketItem {
     )
     lateinit var appUUID: UUID
 
-    @PrimaryKeyJoinColumn
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "app_uuid",
@@ -49,7 +48,6 @@ class MarketItem {
     )
     var assetId: Long? = null
 
-    @Id
     @Column(
         name = "market_hash_name",
         nullable = false,

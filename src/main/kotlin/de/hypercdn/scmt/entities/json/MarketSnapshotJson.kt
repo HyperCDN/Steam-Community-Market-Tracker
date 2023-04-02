@@ -54,15 +54,15 @@ class MarketSnapshotJson(
 
         @JsonProperty("min")
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        var lowestPrice: Float? = null
+        var lowestPrice: Double? = null
 
         @JsonProperty("median")
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        var medianPrice: Float? = null
+        var medianPrice: Double? = null
 
         @JsonProperty("listing")
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        var listingPrice: Float? = null
+        var listingPrice: Double? = null
 
         @JsonProperty("currency")
         @JsonInclude(JsonInclude.Include.NON_NULL)

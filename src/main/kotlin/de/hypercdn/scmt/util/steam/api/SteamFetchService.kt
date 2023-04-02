@@ -2,8 +2,8 @@ package de.hypercdn.scmt.util.steam.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.hypercdn.scmt.config.SCMTMiscConfig
-import de.hypercdn.scmt.config.SCMTRateLimitConfig
+import de.hypercdn.scmt.config.MiscConfig
+import de.hypercdn.scmt.config.RateLimitConfig
 import de.hypercdn.scmt.util.data.parseCurrencyToNumber
 import de.hypercdn.scmt.util.data.parseNumberWithDecorations
 import de.hypercdn.scmt.util.data.sleepWithoutException
@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit
 class SteamFetchService @Autowired constructor(
     val okHttpClient: OkHttpClient,
     val objectMapper: ObjectMapper,
-    val miscConfig: SCMTMiscConfig,
-    val rateLimits: SCMTRateLimitConfig
+    val miscConfig: MiscConfig,
+    val rateLimits: RateLimitConfig
 ) {
 
     var log: Logger = LoggerFactory.getLogger(SteamFetchService::class.java)
