@@ -5,7 +5,7 @@ import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
-import java.time.OffsetDateTime
+import java.time.Duration
 import java.util.*
 
 interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
@@ -32,12 +32,12 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         FROM MarketItem item
         WHERE item.app = :app
             AND item.tracked = true
-            AND item.lastItemScan is null OR item.lastItemScan < :lastScanBefore
+            AND item.lastItemScan is null OR item.lastItemScan + :scanDelayDuration < NOW()
     """
     )
     fun getMarketItemsDueToItemScan(
         @Param("app") app: App,
-        @Param("lastScanBefore") lastScanBefore: OffsetDateTime
+        @Param("scanDelayDuration") scanDelayDuration: Duration
     ): List<MarketItem>
 
     @Query(

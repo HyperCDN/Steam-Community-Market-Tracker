@@ -1,4 +1,4 @@
-package de.hypercdn.scmt.endpoints.lookup
+package de.hypercdn.scmt.endpoints.inventory
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping

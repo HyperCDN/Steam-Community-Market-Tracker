@@ -22,15 +22,15 @@ class SCMTRateLimitConfig {
 }
 
 @Configuration
-@ConfigurationProperties("steam-community-market-tracker.apps")
+@ConfigurationProperties("steam-community-market-tracker.app-search")
 class SCMTAppConfig {
     var updateOnStartup: Boolean = false
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
 
     var trackNewByDefault: Boolean = false
-    var disableTrackingOnEmptyResponse: Boolean = true
-    var deleteNoLongerFound: Boolean = false
+    var untrackOnNotFoundItems: Boolean = true
+    var deleteNotFoundApp: Boolean = false
 }
 
 @Configuration
@@ -42,15 +42,15 @@ class SCMTItemSearchConfig {
     var noUpdateBefore: Duration = Duration.ZERO
 
     var trackNewByDefault: Boolean = false
-    var disableTrackingOnEmptyResponse: Boolean = true
-    var deleteNoLongerFound: Boolean = false
+    var disableNotFoundEntities: Boolean = true
+    var deleteNotFoundEntities: Boolean = false
 }
 
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.item-price-search")
 class SCMTItemPriceSearchConfig {
-    var onStartup: Boolean = false
-    var onCron: Boolean = false
+    var updateOnStartup: Boolean = false
+    var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
 }
@@ -62,6 +62,6 @@ class SCMTInventorySearchConfig {
     var onCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
-    var disableTrackingOnEmptyResponse: Boolean = true
-    var deleteNoLongerFound: Boolean = false
+    var disableNotFoundEntities: Boolean = true
+    var deleteNotFoundEntities: Boolean = false
 }
