@@ -54,8 +54,10 @@ class SteamMarketItemPriceBean @Autowired constructor(
             log.info("Starting update...")
             appRepository.getAllTrackedApps()
                 .forEach { app ->
+                    log.info("Fetching item prices for app {}", app.id)
                     marketItemRepository.getMarketItemsDueToItemScan(app, itemPriceSearchConfig.noUpdateBefore)
                         .forEach inner@{ marketItem ->
+                            log.info("Fetching item price for item {} ({}) from app {}", marketItem.__uuid, marketItem.name, app.id)
                             val priceOverview = try {
                                 steamFetchService.retrievePriceOverviewFromSteam(app.id, marketItem.name)
                             } catch (e: SteamFetchService.HttpFetchException) {
@@ -82,6 +84,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
                             marketItem.lastItemScan = OffsetDateTime.now()
                             marketItemRepository.save(marketItem)
                         }
+                    log.info("Finished fetching item prices for app {}", app.id)
                 }
             log.info("Update finished")
         } catch (e: Exception) {

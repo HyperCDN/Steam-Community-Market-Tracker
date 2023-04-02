@@ -32,7 +32,7 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         FROM MarketItem item
         WHERE item.app = :app
             AND item.tracked = true
-            AND item.lastItemScan is null OR item.lastItemScan + :scanDelayDuration < NOW()
+            AND item.lastItemScan is null OR item.lastItemScan < (NOW() - :scanDelayDuration)
     """
     )
     fun getMarketItemsDueToItemScan(

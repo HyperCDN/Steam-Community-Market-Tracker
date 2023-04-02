@@ -20,15 +20,41 @@ class SecurityConfig {
             .anonymous().disable()
             .authorizeHttpRequests {
                 // no auth or optional
-                it.requestMatchers(HttpMethod.GET, "/lookup").permitAll()
-                it.requestMatchers(HttpMethod.POST, "").permitAll()
-                it.requestMatchers(HttpMethod.PATCH, "").permitAll()
-                it.requestMatchers(HttpMethod.DELETE, "").permitAll()
+                it.requestMatchers(
+                    HttpMethod.GET,
+                    "/app/*",
+                    "/item/*/*", "/item/*/*/snapshots", "/item/*/*/statistics",
+                    "/inventory/*/*", "/inventory/*/*/items"
+                ).permitAll()
+                it.requestMatchers(
+                    HttpMethod.POST,
+                    ""
+                ).permitAll()
+                it.requestMatchers(
+                    HttpMethod.PATCH,
+                    ""
+                ).permitAll()
+                it.requestMatchers(
+                    HttpMethod.DELETE,
+                    ""
+                ).permitAll()
                 // auth required
-                it.requestMatchers(HttpMethod.GET, "").authenticated()
-                it.requestMatchers(HttpMethod.POST, "").authenticated()
-                it.requestMatchers(HttpMethod.PATCH, "").authenticated()
-                it.requestMatchers(HttpMethod.DELETE, "").authenticated()
+                it.requestMatchers(
+                    HttpMethod.GET,
+                    ""
+                ).authenticated()
+                it.requestMatchers(
+                    HttpMethod.POST,
+                    ""
+                ).authenticated()
+                it.requestMatchers(
+                    HttpMethod.PATCH,
+                    ""
+                ).authenticated()
+                it.requestMatchers(
+                    HttpMethod.DELETE,
+                    ""
+                ).authenticated()
                 // exposing the api documentation behind /docs
                 it.requestMatchers("/docs/**").permitAll()
             }

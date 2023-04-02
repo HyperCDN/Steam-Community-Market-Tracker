@@ -18,6 +18,6 @@ interface InventoryItemRepository : CrudRepository<InventoryItem, UUID> {
     )
     fun getItemsCurrentlyInUserInventory(
         @Param("inventory") inventory: UserInventory
-    )
+    ): List<InventoryItem>
 
 }

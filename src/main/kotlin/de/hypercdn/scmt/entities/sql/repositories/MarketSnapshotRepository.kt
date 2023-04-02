@@ -2,10 +2,13 @@ package de.hypercdn.scmt.entities.sql.repositories
 
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.*
 
 interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
@@ -14,26 +17,55 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
         """
         FROM MarketSnapshot snapshot
         WHERE snapshot.marketItem = :item
-        ORDER BY snapshot.createdAt DESC
     """
     )
     fun getAllFor(
-        @Param("item") item: MarketItem
+        @Param("item") item: MarketItem,
+        page: Pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "createdAt"))
     ): List<MarketSnapshot>
 
     @Query(
         """
-        SELECT "min", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MIN(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
+        SELECT "min", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.price.lowestPrice = (
+                    SELECT MIN(inner_.price.lowestPrice) FROM MarketSnapshot inner_ 
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
         UNION
-        SELECT "avg", cast(AVG(snapshot.price.lowestPrice) as double), cast(null as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot
+        SELECT "avg", cast(AVG(snapshot.price.lowestPrice) as double), cast(null as localdatetime) FROM MarketSnapshot snapshot
+            WHERE snapshot.marketItem = :item
+            AND snapshot.createdAt between :endDate and :startDate
         UNION 
-        SELECT "max", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime), snapshot.price.currency FROM MarketSnapshot snapshot WHERE snapshot.price.lowestPrice = (SELECT MAX(inner_.price.lowestPrice) FROM MarketSnapshot inner_)
+        SELECT "max", cast(snapshot.price.lowestPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.price.lowestPrice = (
+                    SELECT MAX(inner_.price.lowestPrice) FROM MarketSnapshot inner_
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
     """
     )
     fun getStatisticsBetween(
         @Param("item") item: MarketItem,
-        @Param("startDate") startDate: LocalDateTime,
-        @Param("endDate") endDate: LocalDateTime,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime,
     ): List<List<Any>>
+
+    @Query(
+        """
+        FROM MarketSnapshot snapshot
+        WHERE snapshot.marketItem in :items
+            AND snapshot.createdAt = (
+                SELECT MAX(inner_.createdAt)
+                FROM MarketSnapshot inner_
+                WHERE inner_.marketItem = snapshot.marketItem
+            )
+    """
+    )
+    fun getLatestFor(
+        @Param("items") items: List<MarketItem>
+    ): List<MarketSnapshot>
 
 }
