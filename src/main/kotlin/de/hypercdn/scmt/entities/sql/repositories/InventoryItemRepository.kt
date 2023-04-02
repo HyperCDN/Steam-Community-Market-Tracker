@@ -1,6 +1,6 @@
 package de.hypercdn.scmt.entities.sql.repositories
 
-import de.hypercdn.scmt.entities.json.InventoryItem
+import de.hypercdn.scmt.entities.sql.entities.InventoryItem
 import de.hypercdn.scmt.entities.sql.entities.UserInventory
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

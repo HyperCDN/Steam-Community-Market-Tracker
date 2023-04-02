@@ -2,7 +2,6 @@ package de.hypercdn.scmt.endpoints.lookup
 
 import de.hypercdn.scmt.entities.json.MarketItemJson
 import de.hypercdn.scmt.entities.json.MarketSnapshotJson
-import de.hypercdn.scmt.entities.json.StatisticsJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository

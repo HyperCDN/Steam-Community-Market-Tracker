@@ -4,18 +4,31 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
 import java.time.OffsetDateTime
 
 class MarketSnapshotJson(
     @JsonIgnore
-    var snapshot: MarketSnapshot
+    val snapshot: MarketSnapshot? = null
 ) {
 
-    @JsonProperty("timestamp")
+    @JsonProperty("item")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    var timestamp: OffsetDateTime? = null
+    var item: MarketItemJson? = null
+
+    @JsonProperty("properties")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var properties: Properties? = null
+
+    class Properties {
+
+        @JsonProperty("timestamp")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        var timestamp: OffsetDateTime? = null
+
+    }
 
     @JsonProperty("availability")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -57,18 +70,38 @@ class MarketSnapshotJson(
 
     }
 
-    init {
-        timestamp = snapshot.createdAt
-        availability = MarketItemAvailabilityJson().apply {
+    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): MarketSnapshotJson {
+        if (snapshot == null || skip) return this
+        this.item = itemProvider?.invoke(snapshot.marketItem)
+        return this
+    }
+
+    fun includeProperties(skip: Boolean = false): MarketSnapshotJson {
+        if (snapshot == null || skip) return this
+        this.properties = Properties().apply {
+            timestamp = snapshot.createdAt
+        }
+        return this
+    }
+
+    fun includeAvailability(skip: Boolean = false): MarketSnapshotJson {
+        if (snapshot == null || skip) return this
+        this.availability = MarketItemAvailabilityJson().apply {
             listings = snapshot.stats.listings
             volume = snapshot.stats.volume
         }
-        price = MarketItemPriceJson().apply {
+        return this
+    }
+
+    fun includePrice(skip: Boolean = false): MarketSnapshotJson {
+        if (snapshot == null || skip) return this
+        this.price = MarketItemPriceJson().apply {
             lowestPrice = snapshot.price.lowestPrice
             medianPrice = snapshot.price.medianPrice
             listingPrice = snapshot.price.listingPrice
             currency = snapshot.price.currency
         }
+        return this
     }
 
 }
