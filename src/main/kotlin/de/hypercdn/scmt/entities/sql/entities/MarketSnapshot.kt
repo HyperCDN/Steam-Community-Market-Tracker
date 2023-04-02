@@ -27,7 +27,7 @@ class MarketSnapshot {
         nullable = false,
         updatable = false
     )
-    lateinit var name: String
+    lateinit var marketItemUUID: UUID
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
@@ -76,19 +76,19 @@ class MarketSnapshot {
             name = "lowest_price",
             updatable = false
         )
-        var lowestPrice: Float? = null
+        var lowestPrice: Double? = null
 
         @Column(
             name = "median_price",
             updatable = false
         )
-        var medianPrice: Float? = null
+        var medianPrice: Double? = null
 
         @Column(
             name = "listing_price",
             updatable = false
         )
-        var listingPrice: Float? = null
+        var listingPrice: Double? = null
 
         @Column(
             name = "currency",

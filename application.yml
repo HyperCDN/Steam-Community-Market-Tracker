@@ -7,33 +7,33 @@ steam-community-market-tracker:
   limits:
     market-item-search: 15s
     market-item-price-search: 4s
-    market-inventory-search: 10s
+    market-inventory-search: 15s
   app-search:
-    on-startup: false
-    on-cron: false
+    update-on-startup: false
+    update-on-cron: false
     cron: 0 0 0 * * * # at midnight
     track-by-default: false
-    disable-tracking-on-empty-response: true
-    delete-not-found-entities: false
+    untrack-on-not-found-items: true
+    delete-not-found-app: false
   item-search:
-    on-startup: false
-    on-cron: false
+    update-on-startup: false
+    update-on-cron: false
     cron: 0 0 */1 * * * # every hour
     no-update-before: 24h
     track-by-default: false
-    disable-tracking-on-empty-response: true
-    delete-no-longer-found: false
+    disable-not-found-entities: true
+    delete-not-found-entities: false
   item-price-search:
-    on-startup: false
-    on-cron: false
+    update-on-startup: false
+    update-on-cron: false
     cron: 0 0 */1 * * * # every hour
     no-update-before: 12h
   inventory-search:
-    on-startup: false
-    on-cron: false
+    update-on-startup: false
+    update-on-cron: false
     cron: 0 0 */1 * * * # every hour
     no-update-before: 24h
-    disable-tracking-on-empty-response: true
+    disable-not-found-entities: true
     delete-not-found-entities: false
 
 spring:
