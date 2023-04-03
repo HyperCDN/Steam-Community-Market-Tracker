@@ -35,9 +35,10 @@ class InventoryItems @Autowired constructor(
             InventoryItemJson(it)
                 .includeItem {
                     MarketItemJson(it)
-                        .includeIds()
+                        .includeName()
                         .includeProperties()
                 }
+                .includeIdentity()
                 .includeProperties()
         }
         val snapshots = snapshotRepository.getLatestFor(items.map { it.marketItem })
@@ -45,7 +46,7 @@ class InventoryItems @Autowired constructor(
             MarketSnapshotJson(it)
                 .includeItem {
                     MarketItemJson(it)
-                        .includeIds()
+                        .includeName()
                 }
                 .includeAvailability()
                 .includePrice()

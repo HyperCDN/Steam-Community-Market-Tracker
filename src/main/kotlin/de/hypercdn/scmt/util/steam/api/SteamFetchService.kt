@@ -121,18 +121,36 @@ class SteamFetchService @Autowired constructor(
         }
     }
 
-//    fun retrieveMarketItemsFrom(appId: Int, userId: Int, count: Int = 5000, language: String = "english"): List<JsonNode> {
-//        sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketInventorySearch.seconds)
-//        val request = Request.Builder()
-//            .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
-//            .build()
-//        okHttpClient.newCall(request).execute().use {
-//            if (!it.isSuccessful) {
-//                throw HttpFetchException(it.code, "Failed to fetch url ${request.url}")
-//            }
-//            return objectMapper.readTree(it.body?.string()).
-//        }
-//    }
+    fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
+        sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketInventorySearch.seconds)
+        val request = Request.Builder()
+            .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
+            .build()
+        okHttpClient.newCall(request).execute().use {
+            if (!it.isSuccessful) {
+                throw HttpFetchException(it.code, "Failed to fetch url ${request.url}")
+            }
+            val payload = objectMapper.readTree(it.body?.string())
+            val assets = payload.get("assets").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }
+            val descriptions = payload.get("descriptions").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }
+            val keys = HashSet<Pair<Long, Long>>().apply {
+                addAll(assets.keys)
+                addAll(descriptions.keys)
+            }
+            val pairs = keys.stream().map { key -> Pair(assets.get(key), descriptions.get(key)) }
+            return pairs.map { pair ->
+                objectMapper.createObjectNode().apply {
+                    put("app-id", pair.first?.get("appid")?.asInt())
+                    put("context-id", pair.first?.get("contextid")?.asInt())
+                    put("asset-id", pair.first?.get("assetid")?.asLong())
+                    put("class-id", pair.first?.get("classid")?.asLong())
+                    put("instance-id", pair.first?.get("instanceid")?.asLong())
+                    put("amount", pair.first?.get("instanceid")?.asInt())
+                    put("name", pair.second?.get("market_hash_name")?.asText())
+                }
+            }.toList()
+        }
+    }
 
     class HttpFetchException(
         var code: Int,

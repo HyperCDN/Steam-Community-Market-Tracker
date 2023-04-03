@@ -35,4 +35,16 @@ interface UserInventoryRepository : CrudRepository<UserInventory, UUID> {
         @Param("userId") userId: Long
     ): UserInventory?
 
+
+    @Query(
+        """
+        FROM UserInventory inventory
+        WHERE inventory.tracked
+            AND inventory.lastItemScan is null OR inventory.lastItemScan < (NOW() + :scanDelayDuration)
+    """
+    )
+    fun getInventoriesDueToItemScan(
+        @Param("scanDelayDuration") scanDelayDuration: Duration
+    ): List<UserInventory>
+
 }

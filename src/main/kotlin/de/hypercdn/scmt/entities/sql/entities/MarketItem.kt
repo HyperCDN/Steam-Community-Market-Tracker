@@ -39,16 +39,6 @@ class MarketItem {
     lateinit var app: App
 
     @Column(
-        name = "context_id",
-    )
-    var contextId: Long? = null
-
-    @Column(
-        name = "asset_id",
-    )
-    var assetId: Long? = null
-
-    @Column(
         name = "market_hash_name",
         nullable = false,
         updatable = false

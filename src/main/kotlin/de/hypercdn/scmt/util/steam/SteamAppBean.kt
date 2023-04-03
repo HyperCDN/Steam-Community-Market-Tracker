@@ -77,9 +77,9 @@ class SteamAppBean @Autowired constructor(
                 log.info("Deleted {} apps", deleted)
             }
             log.info("Update finished")
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             log.error("An exception occurred performing update", e)
-        }finally {
+        } finally {
             running.set(false)
         }
     }

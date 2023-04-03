@@ -31,7 +31,7 @@ class ItemInfo @Autowired constructor(
                     .includeId()
                     .includeName()
             }
-            .includeIds()
+            .includeName()
             .includeProperties()
         return ResponseEntity(itemJson, HttpStatus.OK)
     }

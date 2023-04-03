@@ -22,6 +22,31 @@ class InventoryItemJson(
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var item: MarketItemJson? = null
 
+    @JsonProperty("identity")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var identity: Identity? = null
+
+    class Identity {
+
+        @JsonProperty("context-id")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        var contextId: Long? = null
+
+        @JsonProperty("asset-id")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        var assetId: Long? = null
+
+        @JsonProperty("class-id")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        var classId: Long? = null
+
+        @JsonProperty("instance-id")
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        var instanceId: Long? = null
+
+    }
+
+
     @JsonProperty("properties")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var properties: Properties? = null
@@ -53,6 +78,17 @@ class InventoryItemJson(
     fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): InventoryItemJson {
         if (inventoryItem == null || skip) return this
         item = itemProvider?.invoke(inventoryItem.marketItem)
+        return this
+    }
+
+    fun includeIdentity(skip: Boolean = false): InventoryItemJson {
+        if (inventoryItem == null || skip) return this
+        identity = Identity().apply {
+            contextId = inventoryItem.identity.contextId
+            assetId = inventoryItem.identity.assetId
+            classId = inventoryItem.identity.classId
+            instanceId = inventoryItem.identity.instanceId
+        }
         return this
     }
 

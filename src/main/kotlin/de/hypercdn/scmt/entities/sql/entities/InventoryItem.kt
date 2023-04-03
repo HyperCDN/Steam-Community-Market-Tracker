@@ -54,6 +54,41 @@ class InventoryItem {
     )
     lateinit var marketItem: MarketItem
 
+
+    @Embedded
+    lateinit var identity: Identity
+
+    @Embeddable
+    data class Identity(
+        @Column(
+            name = "context_id",
+            nullable = false,
+            updatable = false
+        )
+        var contextId: Long,
+
+        @Column(
+            name = "asset_id",
+            nullable = false,
+            updatable = false
+        )
+        var assetId: Long,
+
+        @Column(
+            name = "class_id",
+            nullable = false,
+            updatable = false
+        )
+        var classId: Long,
+
+        @Column(
+            name = "instance_id",
+            nullable = false,
+            updatable = false
+        )
+        var instanceId: Long,
+    )
+
     @Column(
         name = "amount",
         nullable = false,
