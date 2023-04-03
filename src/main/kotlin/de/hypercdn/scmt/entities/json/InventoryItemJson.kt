@@ -8,6 +8,7 @@ import de.hypercdn.scmt.entities.sql.entities.InventoryItem
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.entities.UserInventory
 import java.time.OffsetDateTime
+import java.util.*
 
 class InventoryItemJson(
     @JsonIgnore
@@ -69,6 +70,10 @@ class InventoryItemJson(
 
     }
 
+    @JsonProperty("last-snapshot")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var snapshot: MarketSnapshotJson? = null
+
     fun includeInventory(skip: Boolean = false, inventoryProvider: ((app: UserInventory) -> UserInventoryJson?)? = null): InventoryItemJson {
         if (inventoryItem == null || skip) return this
         inventory = inventoryProvider?.invoke(inventoryItem.userInventory)
@@ -99,6 +104,12 @@ class InventoryItemJson(
             createdAt = inventoryItem.createdAt
             superseded = inventoryItem.superseded
         }
+        return this
+    }
+
+    fun includeSnapshot(skip: Boolean = false, snapshotProvider: ((marketItemUUID: UUID) -> MarketSnapshotJson?)?): InventoryItemJson {
+        if (inventoryItem == null || skip) return this
+        snapshot = snapshotProvider?.invoke(inventoryItem.marketItemUUID)
         return this
     }
 

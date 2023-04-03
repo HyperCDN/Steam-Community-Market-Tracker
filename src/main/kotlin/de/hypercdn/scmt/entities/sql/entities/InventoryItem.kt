@@ -110,10 +110,10 @@ class InventoryItem {
         nullable = false
     )
     @ColumnDefault("NULL")
-    lateinit var superseded: OffsetDateTime
+    var superseded: OffsetDateTime? = null
 
     @Column(
-        name = "automaticFetched",
+        name = "automatic_fetched",
         nullable = false,
         updatable = false
     )

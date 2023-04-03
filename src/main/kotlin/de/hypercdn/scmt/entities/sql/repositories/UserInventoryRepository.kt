@@ -39,8 +39,8 @@ interface UserInventoryRepository : CrudRepository<UserInventory, UUID> {
     @Query(
         """
         FROM UserInventory inventory
-        WHERE inventory.tracked
-            AND inventory.lastItemScan is null OR inventory.lastItemScan < (NOW() + :scanDelayDuration)
+        WHERE inventory.tracked = true
+            AND inventory.lastItemScan is null OR inventory.lastItemScan < (NOW() - :scanDelayDuration)
     """
     )
     fun getInventoriesDueToItemScan(

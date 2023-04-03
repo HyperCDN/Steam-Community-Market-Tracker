@@ -123,6 +123,7 @@ class SteamFetchService @Autowired constructor(
 
     fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
         sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketInventorySearch.seconds)
+        log.info("Fetching inventory from steam for user {} and app {}", userId, appId)
         val request = Request.Builder()
             .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
             .build()
@@ -145,7 +146,7 @@ class SteamFetchService @Autowired constructor(
                     put("asset-id", pair.first?.get("assetid")?.asLong())
                     put("class-id", pair.first?.get("classid")?.asLong())
                     put("instance-id", pair.first?.get("instanceid")?.asLong())
-                    put("amount", pair.first?.get("instanceid")?.asInt())
+                    put("amount", pair.first?.get("amount")?.asInt())
                     put("name", pair.second?.get("market_hash_name")?.asText())
                 }
             }.toList()

@@ -55,7 +55,6 @@ class SteamMarketItemBean @Autowired constructor(
             LocalDateTime.now() + itemSearchConfig.noUpdateBefore
             appRepository.getAllAppsDueToItemScan(itemSearchConfig.noUpdateBefore).forEach { app ->
                 log.info("Fetching items for app {}", app.id)
-                val knownMarketItems = marketItemRepository.getAllMarketItemsByApp(app).associateBy { it.name }
                 var start = 0
                 val fetchedItems = HashMap<String, JsonNode>()
                 while (true) {
@@ -67,6 +66,7 @@ class SteamMarketItemBean @Autowired constructor(
                     val currentlyFetchedMarketItems = retrieved.associateBy { it.get("name").asText() }
                     fetchedItems.putAll(currentlyFetchedMarketItems)
                     // to add
+                    val knownMarketItems = marketItemRepository.getAllMarketItemsByApp(app).associateBy { it.name }
                     val addToDbSet = HashSet(currentlyFetchedMarketItems.keys).apply { removeAll(knownMarketItems.keys) }
                     marketItemRepository.saveAll(currentlyFetchedMarketItems.filter { addToDbSet.contains(it.key) }.map {
                         MarketItem().apply {
@@ -83,6 +83,7 @@ class SteamMarketItemBean @Autowired constructor(
                     return@forEach
                 }
                 if (itemSearchConfig.deleteNotFoundEntities) {
+                    val knownMarketItems = marketItemRepository.getAllMarketItemsByApp(app).associateBy { it.name }
                     val removeFromDbSet = HashSet(knownMarketItems.keys).apply { removeAll(fetchedItems.keys) }.map { knownMarketItems.get(it)?.__uuid }
                     marketItemRepository.deleteAllById(removeFromDbSet)
                     log.debug("Removed {} items from app {}", removeFromDbSet.size, app.id)
