@@ -25,12 +25,13 @@ class InventoryItems @Autowired constructor(
 
     @GetMapping("/inventory/{appId}/{userId}/items")
     fun getInventoryItemsWithPrices(
-        @PathVariable("userId") appId: Int,
+        @PathVariable("appId") appId: Int,
         @PathVariable("userId") userId: Long,
-    ): ResponseEntity<HashMap<String, Any>> {
+    ): ResponseEntity<List<InventoryItemJson>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val inventory = inventoryRepository.findUserInventoryByAppAndUserId(app, userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val items = inventoryItemRepository.getItemsCurrentlyInUserInventory(inventory)
+        val snapshots = snapshotRepository.getLatestFor(items.map { it.marketItem }).associateBy { it.marketItemUUID }
         val itemJsons = items.map {
             InventoryItemJson(it)
                 .includeItem {
@@ -40,23 +41,16 @@ class InventoryItems @Autowired constructor(
                 }
                 .includeIdentity()
                 .includeProperties()
-        }
-        val snapshots = snapshotRepository.getLatestFor(items.map { it.marketItem })
-        val snapshotJsons = snapshots.map {
-            MarketSnapshotJson(it)
-                .includeItem {
-                    MarketItemJson(it)
-                        .includeName()
+                .includeSnapshot {
+                    snapshots.get(it)?.let {
+                        MarketSnapshotJson(it)
+                            .includeAvailability()
+                            .includePrice()
+                            .includeProperties()
+                    }
                 }
-                .includeAvailability()
-                .includePrice()
-                .includeProperties()
-        }
-        val inventoryMap = LinkedHashMap<String, Any>().apply {
-            put("items", itemJsons)
-            put("snapshots", snapshotJsons)
-        }
-        return ResponseEntity(inventoryMap, HttpStatus.OK)
+        }.toList()
+        return ResponseEntity(itemJsons, HttpStatus.OK)
     }
 
 }

@@ -20,7 +20,7 @@ class InventoryInfo @Autowired constructor(
 
     @GetMapping("/inventory/{appId}/{userId}")
     fun getInfoForInventory(
-        @PathVariable("userId") appId: Int,
+        @PathVariable("appId") appId: Int,
         @PathVariable("userId") userId: Long,
     ): ResponseEntity<UserInventoryJson> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)

@@ -30,7 +30,7 @@ CREATE TABLE market_items
     last_item_scan   TIMESTAMP          DEFAULT NULL,
 
     PRIMARY KEY (market_item_uuid),
-    UNIQUE (app_uuid),
+    UNIQUE (app_uuid, market_hash_name),
 
     CONSTRAINT fk_app
         FOREIGN KEY (app_uuid)
@@ -93,9 +93,9 @@ CREATE TABLE inventory_items
     instance_id          BIGINT    NOT NULL,
 
     amount               INT       NOT NULL DEFAULT 0,
-    createdAt            TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at           TIMESTAMP NOT NULL DEFAULT NOW(),
     superseded           TIMESTAMP          DEFAULT NULL,
-    automaticFetched     BOOLEAN   NOT NULL,
+    automatic_fetched    BOOLEAN   NOT NULL,
 
     PRIMARY KEY (inventory_items_uuid),
     CONSTRAINT fk_user_inv

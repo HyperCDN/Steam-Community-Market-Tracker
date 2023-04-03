@@ -14,12 +14,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-@Service
+@Component
 class SteamInventoryBean @Autowired constructor(
     var steamFetchService: SteamFetchService,
     val inventorySearchConfig: InventorySearchConfig,
@@ -57,15 +57,12 @@ class SteamInventoryBean @Autowired constructor(
                     .map {
                         InventoryItem().apply {
                             userInventoryUUID = inv.__uuid
-                            marketItemRepository.findMarketItemByAppAndName(inv.app, it.get("name").asText())?.let { item ->
-                                marketItemUUID = item.__uuid
-                            } ?: {
-                                marketItemUUID = marketItemRepository.save(MarketItem().apply {
-                                    appUUID = inv.appUUID
-                                    name = it.get("name").asText()
-                                    tracked = inventorySearchConfig.trackUnknownByDefault
-                                }).__uuid
-                            }
+                            val item = marketItemRepository.findMarketItemByAppAndName(inv.app, it.get("name").asText()) ?: marketItemRepository.save(MarketItem().apply {
+                                appUUID = inv.appUUID
+                                name = it.get("name").asText()
+                                tracked = inventorySearchConfig.trackUnknownByDefault
+                            })
+                            marketItemUUID = item.__uuid
                             identity = InventoryItem.Identity(
                                 it.get("context-id").asLong(),
                                 it.get("asset-id").asLong(),
@@ -94,8 +91,11 @@ class SteamInventoryBean @Autowired constructor(
                         }
                     }
                 }
+                log.info("Found changes for +{} -{} for user {} and app {}", addItems.size, deleteItems.size, inv.userId, inv.app.id)
                 inventoryItemRepository.saveAll(deleteItems.map { it.apply { superseded = OffsetDateTime.now() } })
                 inventoryItemRepository.saveAll(addItems)
+
+                inventoryRepository.save(inv.apply { lastItemScan = OffsetDateTime.now() })
             }
             log.info("Update finished")
         } catch (e: Exception) {
