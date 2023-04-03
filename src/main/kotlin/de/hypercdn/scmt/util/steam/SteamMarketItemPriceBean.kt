@@ -6,6 +6,7 @@ import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
+import de.hypercdn.scmt.util.delay.Delay
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
 import lombok.Synchronized
 import org.slf4j.Logger
@@ -36,6 +37,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
 
     @Async
     @EventListener(ApplicationReadyEvent::class)
+    @Delay(amountPropertyValue = "steam-community-market-tracker.item-price-search.update-on-startup-delay")
     fun onStartup() {
         if (!itemPriceSearchConfig.updateOnStartup) return
         updateTrackedItemSnapshots()

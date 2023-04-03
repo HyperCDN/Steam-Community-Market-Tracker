@@ -5,18 +5,20 @@ steam-community-market-tracker:
     currency: 3
     currency-name: EUR
   rate-limits:
-    market-item-search: 15s
+    market-item-search: 16s
     market-item-price-search: 4s
-    market-inventory-search: 30s
+    market-inventory-search: 61s
   app-search:
     update-on-startup: false
+    update-on-startup-delay: 0s
     update-on-cron: false
     cron: "0 0 0 * * *" # try at midnight
     track-by-default: false
     untrack-on-no-found-items: true
     delete-not-found-app: false
   item-search:
-    update-on-startup: false
+    update-on-startup: true
+    update-on-startup-delay: 1m
     update-on-cron: true
     cron: "0 0 */1 * * *" # try every hour
     no-update-before: 24h # last update must be older than 24h
@@ -25,11 +27,13 @@ steam-community-market-tracker:
     delete-not-found-entities: false
   item-price-search:
     update-on-startup: true
+    update-on-startup-delay: 15m
     update-on-cron: true
     cron: "0 0 */1 * * *" # try every hour
     no-update-before: 12h # last update must be older than 12h
   inventory-search:
     update-on-startup: true
+    update-on-startup-delay: 5m
     update-on-cron: true
     cron: "0 0 */1 * * *" # every hour
     no-update-before: 12h # last update must be older than 12h

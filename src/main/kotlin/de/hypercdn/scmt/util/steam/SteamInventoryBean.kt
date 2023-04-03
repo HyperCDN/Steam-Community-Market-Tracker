@@ -6,6 +6,7 @@ import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.repositories.InventoryItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
+import de.hypercdn.scmt.util.delay.Delay
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
 import lombok.Synchronized
 import org.slf4j.Logger
@@ -36,6 +37,7 @@ class SteamInventoryBean @Autowired constructor(
 
     @Async
     @EventListener(ApplicationReadyEvent::class)
+    @Delay(amountPropertyValue = "steam-community-market-tracker.inventory-search.update-on-startup-delay")
     fun onStartup() {
         if (!inventorySearchConfig.updateOnStartup) return
         updateInventories()

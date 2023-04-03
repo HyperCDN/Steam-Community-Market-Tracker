@@ -6,7 +6,7 @@ import de.hypercdn.scmt.config.MiscConfig
 import de.hypercdn.scmt.config.RateLimitConfig
 import de.hypercdn.scmt.util.data.parseCurrencyToNumber
 import de.hypercdn.scmt.util.data.parseNumberWithDecorations
-import de.hypercdn.scmt.util.data.sleepWithoutException
+import de.hypercdn.scmt.util.delay.Delay
 import lombok.Synchronized
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -17,7 +17,6 @@ import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
-import java.util.concurrent.TimeUnit
 
 @Component
 class SteamFetchService @Autowired constructor(
@@ -54,8 +53,8 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
+    @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-price-search")
     fun retrievePriceOverviewFromSteam(appId: Int, name: String, currency: Int = miscConfig.currency): JsonNode {
-        sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketItemPriceSearch.seconds)
         log.info("Fetching price overview from steam for item {} from app {}", name, appId)
         val request = Request.Builder()
             .url("https://steamcommunity.com/market/priceoverview/?appid=${appId}&market_hash_name=${URLEncoder.encode(name, Charsets.UTF_8)}&currency=${currency}")
@@ -89,8 +88,8 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
+    @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-search")
     fun retrieveMarketItemsFromSteam(appId: Int, start: Int = 0, count: Int = 100): List<JsonNode> {
-        sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketItemSearch.seconds)
         log.info("Fetching items from steam for app {} (start: {})", appId, start)
         val request = Request.Builder()
             .url("https://steamcommunity.com/market/search/render/?appid=${appId}&norender=1&start=${start}&count=${count}")
@@ -119,8 +118,8 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
+    @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-inventory-search")
     fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
-        sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketInventorySearch.seconds)
         log.info("Fetching inventory from steam for user {} and app {}", userId, appId)
         val request = Request.Builder()
             .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")

@@ -2,7 +2,6 @@ package de.hypercdn.scmt.util.data
 
 import java.text.NumberFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun parseCurrencyToNumber(string: String): Pair<Number?, String?> {
     val detectedCurrencies = Locale.getAvailableLocales()
@@ -23,12 +22,6 @@ private fun getCurrencyForLocale(locale: Locale): Currency? {
     }catch (e: Exception){
         return null
     }
-}
-
-fun sleepWithoutException(unit: TimeUnit, value: Long) {
-    try {
-        unit.sleep(value)
-    }catch (_: Exception) {}
 }
 
 fun parseNumberWithDecorations(string: String): Number {

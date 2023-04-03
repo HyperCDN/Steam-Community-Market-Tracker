@@ -25,6 +25,7 @@ class RateLimitConfig {
 @ConfigurationProperties("steam-community-market-tracker.app-search")
 class AppConfig {
     var updateOnStartup: Boolean = false
+    var updateOnStartupDelay: Duration = Duration.ZERO
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
 
@@ -37,6 +38,7 @@ class AppConfig {
 @ConfigurationProperties("steam-community-market-tracker.item-search")
 class ItemSearchConfig {
     var updateOnStartup: Boolean = false
+    var updateOnStartupDelay: Duration = Duration.ZERO
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
@@ -50,6 +52,7 @@ class ItemSearchConfig {
 @ConfigurationProperties("steam-community-market-tracker.item-price-search")
 class ItemPriceSearchConfig {
     var updateOnStartup: Boolean = false
+    var updateOnStartupDelay: Duration = Duration.ZERO
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
@@ -59,6 +62,7 @@ class ItemPriceSearchConfig {
 @ConfigurationProperties("steam-community-market-tracker.inventory-search")
 class InventorySearchConfig {
     var updateOnStartup: Boolean = false
+    var updateOnStartupDelay: Duration = Duration.ZERO
     var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO

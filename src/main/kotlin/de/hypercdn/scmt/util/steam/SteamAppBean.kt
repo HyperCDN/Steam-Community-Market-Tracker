@@ -3,6 +3,7 @@ package de.hypercdn.scmt.util.steam
 import de.hypercdn.scmt.config.AppConfig
 import de.hypercdn.scmt.entities.sql.entities.App
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
+import de.hypercdn.scmt.util.delay.Delay
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
 import lombok.Synchronized
 import org.slf4j.Logger
@@ -29,6 +30,7 @@ class SteamAppBean @Autowired constructor(
 
     @Async
     @EventListener(ApplicationReadyEvent::class)
+    @Delay(amountPropertyValue = "steam-community-market-tracker.app-search.update-on-startup-delay")
     fun onStartup() {
         if (!appConfig.updateOnStartup) return
         updateListOfSteamApps()
