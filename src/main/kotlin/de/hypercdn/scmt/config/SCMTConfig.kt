@@ -63,6 +63,4 @@ class InventorySearchConfig {
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
     var trackUnknownByDefault: Boolean = false
-    var disableNotFoundEntities: Boolean = true
-    var deleteNotFoundEntities: Boolean = false
 }

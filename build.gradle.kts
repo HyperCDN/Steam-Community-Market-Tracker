@@ -59,6 +59,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 
 	implementation("org.springframework.boot:spring-boot-starter-aop:3.0.2")
+	implementation("org.springframework.retry:spring-retry:2.0.1")
 
 	implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
 	implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")

@@ -7,11 +7,14 @@ import de.hypercdn.scmt.config.RateLimitConfig
 import de.hypercdn.scmt.util.data.parseCurrencyToNumber
 import de.hypercdn.scmt.util.data.parseNumberWithDecorations
 import de.hypercdn.scmt.util.data.sleepWithoutException
+import lombok.Synchronized
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
@@ -26,6 +29,8 @@ class SteamFetchService @Autowired constructor(
 
     var log: Logger = LoggerFactory.getLogger(SteamFetchService::class.java)
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
     fun retrieveAppListFromGithub(): List<JsonNode> {
         log.info("Fetching app id list from github")
         val request = Request.Builder()
@@ -47,6 +52,8 @@ class SteamFetchService @Autowired constructor(
         }
     }
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
     fun retrievePriceOverviewFromSteam(appId: Int, name: String, currency: Int = miscConfig.currency): JsonNode {
         sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketItemPriceSearch.seconds)
         log.info("Fetching price overview from steam for item {} from app {}", name, appId)
@@ -79,20 +86,9 @@ class SteamFetchService @Autowired constructor(
         }
     }
 
-    fun retrieveAllMarketItemsFromSteam(appId: Int): List<JsonNode> {
-        val marketItems = ArrayList<JsonNode>()
-        var start = 0
-        while (true) {
-            val retrieved = retrieveMarketItemsFromSteam(appId, start)
-            start += retrieved.size
-            marketItems.addAll(retrieved)
-            if (retrieved.isEmpty()) {
-                break
-            }
-        }
-        return marketItems
-    }
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
     fun retrieveMarketItemsFromSteam(appId: Int, start: Int = 0, count: Int = 100): List<JsonNode> {
         sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketItemSearch.seconds)
         log.info("Fetching items from steam for app {} (start: {})", appId, start)
@@ -121,6 +117,8 @@ class SteamFetchService @Autowired constructor(
         }
     }
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
     fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
         sleepWithoutException(TimeUnit.SECONDS, rateLimits.marketInventorySearch.seconds)
         log.info("Fetching inventory from steam for user {} and app {}", userId, appId)

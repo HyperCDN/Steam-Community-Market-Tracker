@@ -7,11 +7,14 @@ import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
+import lombok.Synchronized
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -45,6 +48,8 @@ class SteamMarketItemPriceBean @Autowired constructor(
         updateTrackedItemSnapshots()
     }
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 3.0, maxDelay = 240_000))
     fun updateTrackedItemSnapshots() {
         if (!running.compareAndSet(false, true)) {
             log.warn("Update already in progress - Skipping execution")

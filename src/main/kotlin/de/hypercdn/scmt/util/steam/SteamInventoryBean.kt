@@ -7,11 +7,14 @@ import de.hypercdn.scmt.entities.sql.repositories.InventoryItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
+import lombok.Synchronized
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -45,6 +48,8 @@ class SteamInventoryBean @Autowired constructor(
         updateInventories()
     }
 
+    @Synchronized
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 3.0, maxDelay = 240_000))
     fun updateInventories() {
         if (!running.compareAndSet(false, true)) {
             log.warn("Update already in progress - Skipping execution")
@@ -61,6 +66,7 @@ class SteamInventoryBean @Autowired constructor(
                                 appUUID = inv.appUUID
                                 name = it.get("name").asText()
                                 tracked = inventorySearchConfig.trackUnknownByDefault
+                                log.info("Adding unknown market item {} from inventory for user {} and app {}", name, inv.userId, inv.app.id)
                             })
                             marketItemUUID = item.__uuid
                             identity = InventoryItem.Identity(

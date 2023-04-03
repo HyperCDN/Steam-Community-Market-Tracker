@@ -7,34 +7,32 @@ steam-community-market-tracker:
   rate-limits:
     market-item-search: 15s
     market-item-price-search: 4s
-    market-inventory-search: 15s
+    market-inventory-search: 30s
   app-search:
     update-on-startup: false
     update-on-cron: false
-    cron: "0 0 0 * * *" # at midnight
+    cron: "0 0 0 * * *" # try at midnight
     track-by-default: false
     untrack-on-no-found-items: true
     delete-not-found-app: false
   item-search:
     update-on-startup: false
-    update-on-cron: false
-    cron: "0 0 */1 * * *" # every hour
-    no-update-before: 24h
+    update-on-cron: true
+    cron: "0 0 */1 * * *" # try every hour
+    no-update-before: 24h # last update must be older than 24h
     track-by-default: false
     disable-not-found-entities: true
     delete-not-found-entities: false
   item-price-search:
-    update-on-startup: false
-    update-on-cron: false
-    cron: "0 0 */1 * * *" # every hour
-    no-update-before: 12h
+    update-on-startup: true
+    update-on-cron: true
+    cron: "0 0 */1 * * *" # try every hour
+    no-update-before: 12h # last update must be older than 12h
   inventory-search:
-    update-on-startup: false
-    update-on-cron: false
+    update-on-startup: true
+    update-on-cron: true
     cron: "0 0 */1 * * *" # every hour
-    no-update-before: 24h
-    disable-not-found-entities: true
-    delete-not-found-entities: false
+    no-update-before: 12h # last update must be older than 12h
 
 spring:
   datasource:
@@ -45,7 +43,7 @@ springdoc:
   api-docs:
     enabled: true
   swagger-ui:
-    enabled: true
+    enabled: false
 logging:
   level:
     root: info
