@@ -17,14 +17,6 @@ class MarketItemJson (
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var app: AppJson? = null
 
-    @JsonProperty("context_id")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    var contextId: Long? = null
-
-    @JsonProperty("asset_id")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    var assetId: Long? = null
-
     @JsonProperty("market_hash_name")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var name: String? = null
@@ -51,11 +43,9 @@ class MarketItemJson (
         return this
     }
 
-    fun includeIds(skip: Boolean = false): MarketItemJson {
+    fun includeName(skip: Boolean = false): MarketItemJson {
         if (marketItem == null || skip) return this
         name = marketItem.name
-        contextId = marketItem.contextId
-        assetId = marketItem.assetId
         return this
     }
 

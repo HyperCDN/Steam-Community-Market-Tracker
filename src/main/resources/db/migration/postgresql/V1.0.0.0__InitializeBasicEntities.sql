@@ -23,8 +23,6 @@ CREATE TABLE market_items
     market_item_uuid UUID      NOT NULL DEFAULT gen_random_uuid(),
 
     app_uuid         UUID      NOT NULL,
-    context_id       BIGINT             DEFAULT NULL,
-    asset_id         BIGINT             DEFAULT NULL,
     market_hash_name TEXT      NOT NULL,
 
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -32,7 +30,7 @@ CREATE TABLE market_items
     last_item_scan   TIMESTAMP          DEFAULT NULL,
 
     PRIMARY KEY (market_item_uuid),
-    UNIQUE (app_uuid, context_id, asset_id),
+    UNIQUE (app_uuid),
 
     CONSTRAINT fk_app
         FOREIGN KEY (app_uuid)
@@ -89,6 +87,10 @@ CREATE TABLE inventory_items
 
     user_inventory_uuid  UUID      NOT NULL,
     market_item_uuid     uuid      NOT NULL,
+    context_id           BIGINT    NOT NULL,
+    asset_id             BIGINT    NOT NULL,
+    class_id             BIGINT    NOT NULL,
+    instance_id          BIGINT    NOT NULL,
 
     amount               INT       NOT NULL DEFAULT 0,
     createdAt            TIMESTAMP NOT NULL DEFAULT NOW(),

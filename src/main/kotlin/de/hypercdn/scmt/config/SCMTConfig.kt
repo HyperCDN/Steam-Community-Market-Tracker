@@ -58,10 +58,11 @@ class ItemPriceSearchConfig {
 @Configuration
 @ConfigurationProperties("steam-community-market-tracker.inventory-search")
 class InventorySearchConfig {
-    var onStartup: Boolean = false
-    var onCron: Boolean = false
+    var updateOnStartup: Boolean = false
+    var updateOnCron: Boolean = false
     var cron: String = Scheduled.CRON_DISABLED
     var noUpdateBefore: Duration = Duration.ZERO
+    var trackUnknownByDefault: Boolean = false
     var disableNotFoundEntities: Boolean = true
     var deleteNotFoundEntities: Boolean = false
 }
