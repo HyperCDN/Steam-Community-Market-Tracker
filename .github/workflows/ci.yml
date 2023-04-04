@@ -19,12 +19,6 @@ jobs:
     - uses: gradle/gradle-build-action@v2
       with:
         arguments: bootJar --no-daemon
-    - uses: actions/upload-artifact@v3
-      with:
-        name: SteamCommunityMarketTracker.jar
-        path: build/libs/**.jar
-        if-no-files-found: warn
-        retention-days: 7
     - run: ls build/libs/
     - run: mv -- build/libs/**.jar build/libs/SCMT.jar
     
