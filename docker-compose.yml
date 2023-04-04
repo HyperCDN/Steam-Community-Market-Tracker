@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  scmt:
+    image: ghcr.io/hypercdn/scmt:main
+    container_name: scmt
+    restart: unless-stopped
+    depends_on: scmt-db
+    networks:
+      - scmt
+    ports:
+      - 9090:9090
+    volumes:
+      - ./application.yml:/WORKDIR/application.yml
+  scmt-db:
+    image: postgres:15.2-alpine
+    container_name: scmt-db
+    restart: unless-stopped
+    networks:
+      - scmt
+    ports:
+      - 5432:5432
+    volumes:
+      - scmt-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=scmt
+      - POSTGRES_USER=scmt
+      - POSTGRES_PASSWORD=scmtsupersecret
+
+volumes:
+  scmt-data:
+    name: scmt-data
+networks:
+  scmt:
+    name: scmt
