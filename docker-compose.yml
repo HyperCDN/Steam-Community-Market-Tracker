@@ -1,35 +1,36 @@
 version: '3.9'
 
 services:
-  scmt:
+  steam-community-market-tracker:
     image: ghcr.io/hypercdn/scmt:main
-    container_name: scmt
+    container_name: steam-community-market-tracker
     restart: unless-stopped
-    depends_on: scmt-db
+    depends_on:
+      - steam-community-market-tracker-db
     networks:
-      - scmt
+      - steam-community-market-tracker
     ports:
       - 9090:9090
     volumes:
       - ./application.yml:/WORKDIR/application.yml
-  scmt-db:
+  steam-community-market-tracker-db:
     image: postgres:15.2-alpine
-    container_name: scmt-db
+    container_name: steam-community-market-tracker-db
     restart: unless-stopped
     networks:
-      - scmt
+      - steam-community-market-tracker
     ports:
       - 5432:5432
     volumes:
-      - scmt-data:/var/lib/postgresql/data
+      - steam-community-market-tracker-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=scmt
       - POSTGRES_USER=scmt
       - POSTGRES_PASSWORD=scmtsupersecret
 
 volumes:
-  scmt-data:
-    name: scmt-data
+  steam-community-market-tracker-data:
+    name: steam-community-market-tracker-data
 networks:
-  scmt:
-    name: scmt
+  steam-community-market-tracker:
+    name: steam-community-market-tracker

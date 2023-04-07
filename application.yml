@@ -41,6 +41,7 @@ steam-community-market-tracker:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/scmt
+#    url: jdbc:postgresql://steam-community-market-tracker-db:5432/scmt
     username: scmt
     password: scmtsupersecret
 springdoc:
