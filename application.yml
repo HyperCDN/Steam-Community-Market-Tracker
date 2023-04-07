@@ -4,40 +4,41 @@ steam-community-market-tracker:
   misc:
     currency: 3
     currency-name: EUR
-  rate-limits:
-    market-item-search: 16s
-    market-item-price-search: 4s
-    market-inventory-search: 61s
-  app-search:
+  rate-limits: # doubled so we do not hit rate limits caused by whatever reason & end up getting the ip banned
+    market-item-search: 30s # min ~15s
+    market-item-price-search: 6s #min ~3s
+    market-inventory-search: 120s #min ~60s?
+  app-search: # dont search for new apps on startup, disable tracking for apps when no items are on the market
     update-on-startup: false
     update-on-startup-delay: 0s
     update-on-cron: false
-    cron: "0 0 0 * * *" # try at midnight
+    cron: "0 0 0 * * *" # at midnight
     track-by-default: false
     untrack-on-no-found-items: true
     delete-not-found-app: false
-  item-search:
+  item-search: # search for new items 1min after startup and every hour. previous update must be older than 24 hours. disable tracking for items not found in sweep
     update-on-startup: true
     update-on-startup-delay: 1m
     update-on-cron: true
-    cron: "0 0 */1 * * *" # try every hour
-    no-update-before: 24h # last update must be older than 24h
+    cron: "0 0 */1 * * *" # every hour
+    no-update-before: 24h
     track-by-default: false
     disable-not-found-entities: true
     delete-not-found-entities: false
-  item-price-search:
+  item-price-search: # search for item prices 15min after startup and every hour. previous update must be older than 12 hours
     update-on-startup: true
     update-on-startup-delay: 15m
     update-on-cron: true
-    cron: "0 0 */1 * * *" # try every hour
-    no-update-before: 12h # last update must be older than 12h
-  inventory-search:
+    cron: "0 0 */1 * * *" #  every hour
+    no-update-before: 12h
+  inventory-search: # search for inventories 5min after startup and every hour. previous update must be older than 12 hours
     update-on-startup: true
     update-on-startup-delay: 5m
     update-on-cron: true
     cron: "0 0 */1 * * *" # every hour
-    no-update-before: 12h # last update must be older than 12h
+    no-update-before: 12h
 
+# configure database
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/scmt
@@ -46,9 +47,9 @@ spring:
     password: scmtsupersecret
 springdoc:
   api-docs:
-    enabled: true
+    enabled: true # exposes api docs behind /docs/
   swagger-ui:
-    enabled: false
+    enabled: false # exposes swagger ui on /docs/swagger-ui to view api docs
 logging:
   level:
     root: info
