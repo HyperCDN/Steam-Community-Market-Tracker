@@ -22,18 +22,34 @@ class ItemStatistics @Autowired constructor(
     val objectMapper: ObjectMapper
 ) {
 
-    @GetMapping("/item/{appId}/{marketHashName}/statistics")
-    fun getItemSnapshots(
+    @GetMapping("/item/{appId}/{marketHashName}/price")
+    fun getItemPriceStatistics(
         @PathVariable("appId") appId: Int,
         @PathVariable("marketHashName") marketHashName: String,
     ): ResponseEntity<HashMap<String, StatisticsJson<Double>>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val item = marketItemRepository.findMarketItemByAppAndName(app, marketHashName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val statisticsMap = LinkedHashMap<String, StatisticsJson<Double>>().apply {
-            put("1d", StatisticsJson.from(snapshotRepository.getStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusDays(1))))
-            put("1w", StatisticsJson.from(snapshotRepository.getStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusWeeks(1))))
-            put("1m", StatisticsJson.from(snapshotRepository.getStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusMonths(1))))
-            put("1y", StatisticsJson.from(snapshotRepository.getStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusYears(1))))
+            put("1d", StatisticsJson.from(snapshotRepository.getPriceStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusDays(1))))
+            put("1w", StatisticsJson.from(snapshotRepository.getPriceStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusWeeks(1))))
+            put("1m", StatisticsJson.from(snapshotRepository.getPriceStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusMonths(1))))
+            put("1y", StatisticsJson.from(snapshotRepository.getPriceStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusYears(1))))
+        }
+        return ResponseEntity(statisticsMap, HttpStatus.OK)
+    }
+
+    @GetMapping("/item/{appId}/{marketHashName}/volume")
+    fun getItemVolumeStatistics(
+        @PathVariable("appId") appId: Int,
+        @PathVariable("marketHashName") marketHashName: String,
+    ): ResponseEntity<HashMap<String, StatisticsJson<Int>>> {
+        val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val item = marketItemRepository.findMarketItemByAppAndName(app, marketHashName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val statisticsMap = LinkedHashMap<String, StatisticsJson<Int>>().apply {
+            put("1d", StatisticsJson.from(snapshotRepository.getVolumeStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusDays(1))))
+            put("1w", StatisticsJson.from(snapshotRepository.getVolumeStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusWeeks(1))))
+            put("1m", StatisticsJson.from(snapshotRepository.getVolumeStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusMonths(1))))
+            put("1y", StatisticsJson.from(snapshotRepository.getVolumeStatisticsBetween(item, OffsetDateTime.now(), OffsetDateTime.now().minusYears(1))))
         }
         return ResponseEntity(statisticsMap, HttpStatus.OK)
     }

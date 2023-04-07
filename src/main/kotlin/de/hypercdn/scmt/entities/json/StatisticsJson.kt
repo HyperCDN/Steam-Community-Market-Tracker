@@ -33,14 +33,14 @@ class StatisticsJson<T> {
 
     companion object {
 
-        fun from(input: List<List<Any>>): StatisticsJson<Double> {
+        fun <T : Any> from(input: List<List<Any>>): StatisticsJson<T> {
             if (input.isEmpty()) return StatisticsJson()
             val map = input.associateBy(keySelector = {
                 it.get(0) as String
             }, valueTransform = {
-                Pair(it.get(1) as Double?, if (it.get(2) != null) OffsetDateTime.of(it.get(2) as LocalDateTime?, ZoneOffset.UTC) else null)
+                Pair(it.get(1) as T?, if (it.get(2) != null) OffsetDateTime.of(it.get(2) as LocalDateTime?, ZoneOffset.UTC) else null)
             })
-            return StatisticsJson<Double>().apply {
+            return StatisticsJson<T>().apply {
                 min = map.get("min")?.first
                 minTimestamp = map.get("min")?.second
                 avg = map.get("avg")?.first
