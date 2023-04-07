@@ -23,7 +23,7 @@ class SecurityConfig {
                 it.requestMatchers(
                     HttpMethod.GET,
                     "/app/*",
-                    "/item/*/*", "/item/*/*/snapshots", "/item/*/*/statistics",
+                    "/item/*/*", "/item/*/*/snapshots", "/item/*/*/price", "/item/*/*/volume",
                     "/inventory/*/*", "/inventory/*/*/items"
                 ).permitAll()
                 it.requestMatchers(

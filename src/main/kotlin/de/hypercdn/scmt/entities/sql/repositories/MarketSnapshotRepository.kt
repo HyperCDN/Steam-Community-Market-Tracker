@@ -47,7 +47,36 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
                 )
     """
     )
-    fun getStatisticsBetween(
+    fun getPriceStatisticsBetween(
+        @Param("item") item: MarketItem,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime,
+    ): List<List<Any>>
+
+    @Query(
+        """
+        SELECT "min", cast(snapshot.stats.volume as integer), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.stats.volume = (
+                    SELECT MIN(inner_.stats.volume) FROM MarketSnapshot inner_ 
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
+        UNION
+        SELECT "avg", cast(AVG(snapshot.stats.volume) as integer), cast(null as localdatetime) FROM MarketSnapshot snapshot
+            WHERE snapshot.marketItem = :item
+            AND snapshot.createdAt between :endDate and :startDate
+        UNION 
+        SELECT "max", cast(snapshot.stats.volume as integer), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.stats.volume = (
+                    SELECT MAX(inner_.stats.volume) FROM MarketSnapshot inner_
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
+    """
+    )
+    fun getVolumeStatisticsBetween(
         @Param("item") item: MarketItem,
         @Param("startDate") startDate: OffsetDateTime,
         @Param("endDate") endDate: OffsetDateTime,
