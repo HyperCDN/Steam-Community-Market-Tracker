@@ -47,7 +47,36 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
                 )
     """
     )
-    fun getPriceStatisticsBetween(
+    fun getPriceStatisticsForLowestBetween(
+        @Param("item") item: MarketItem,
+        @Param("startDate") startDate: OffsetDateTime,
+        @Param("endDate") endDate: OffsetDateTime,
+    ): List<List<Any>>
+
+    @Query(
+        """
+        SELECT "min", cast(snapshot.price.medianPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.price.medianPrice = (
+                    SELECT MIN(inner_.price.medianPrice) FROM MarketSnapshot inner_ 
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
+        UNION
+        SELECT "avg", cast(AVG(snapshot.price.medianPrice) as double), cast(null as localdatetime) FROM MarketSnapshot snapshot
+            WHERE snapshot.marketItem = :item
+            AND snapshot.createdAt between :endDate and :startDate
+        UNION 
+        SELECT "max", cast(snapshot.price.medianPrice as double), cast(snapshot.createdAt as localdatetime) FROM MarketSnapshot snapshot 
+            WHERE snapshot.marketItem = :item
+                AND snapshot.price.medianPrice = (
+                    SELECT MAX(inner_.price.medianPrice) FROM MarketSnapshot inner_
+                        WHERE inner_.marketItem = :item
+                        AND inner_.createdAt between :endDate and :startDate
+                )
+    """
+    )
+    fun getPriceStatisticsForMedianBetween(
         @Param("item") item: MarketItem,
         @Param("startDate") startDate: OffsetDateTime,
         @Param("endDate") endDate: OffsetDateTime,
