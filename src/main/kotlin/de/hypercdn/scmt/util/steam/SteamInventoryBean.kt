@@ -32,7 +32,7 @@ class SteamInventoryBean @Autowired constructor(
     val marketItemRepository: MarketItemRepository
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamAppBean::class.java)
+    var log: Logger = LoggerFactory.getLogger(SteamInventoryBean::class.java)
     var running: AtomicBoolean = AtomicBoolean(false)
 
     @Async
