@@ -41,23 +41,26 @@ class SecurityConfig {
                 // auth required
                 it.requestMatchers(
                     HttpMethod.GET,
-                    ""
+                    "/apps",
+                    "/items/*"
                 ).authenticated()
                 it.requestMatchers(
                     HttpMethod.POST,
-                    ""
+                    "/inventory/*"
                 ).authenticated()
                 it.requestMatchers(
                     HttpMethod.PATCH,
-                    ""
+                    "/app/*",
+                    "/item/*/*",
+                    "/inventory/*/*"
                 ).authenticated()
                 it.requestMatchers(
                     HttpMethod.DELETE,
-                    ""
+                    "/inventory/*"
                 ).authenticated()
                 // exposing the api documentation behind /docs
                 it.requestMatchers("/docs/**").permitAll()
-            }
+            }.httpBasic()
 
         return http.build()
     }

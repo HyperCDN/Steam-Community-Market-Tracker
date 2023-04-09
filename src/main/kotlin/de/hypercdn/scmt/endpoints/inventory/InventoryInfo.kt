@@ -1,7 +1,7 @@
 package de.hypercdn.scmt.endpoints.inventory
 
-import de.hypercdn.scmt.entities.json.AppJson
-import de.hypercdn.scmt.entities.json.UserInventoryJson
+import de.hypercdn.scmt.entities.json.out.AppJson
+import de.hypercdn.scmt.entities.json.out.UserInventoryJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
 import org.springframework.beans.factory.annotation.Autowired

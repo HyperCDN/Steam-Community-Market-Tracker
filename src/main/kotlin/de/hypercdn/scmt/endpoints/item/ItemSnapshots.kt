@@ -1,6 +1,6 @@
 package de.hypercdn.scmt.endpoints.item
 
-import de.hypercdn.scmt.entities.json.MarketSnapshotJson
+import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository

@@ -1,4 +1,4 @@
-package de.hypercdn.scmt.entities.json
+package de.hypercdn.scmt.entities.json.out
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonInclude

@@ -1,7 +1,7 @@
 package de.hypercdn.scmt.endpoints.item
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.hypercdn.scmt.entities.json.StatisticsJson
+import de.hypercdn.scmt.entities.json.out.StatisticsJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
