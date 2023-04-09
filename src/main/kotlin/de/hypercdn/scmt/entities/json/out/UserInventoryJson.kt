@@ -1,4 +1,4 @@
-package de.hypercdn.scmt.entities.json
+package de.hypercdn.scmt.entities.json.out
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -27,11 +27,11 @@ class UserInventoryJson(
 
     class Properties {
 
-        @JsonProperty("is_tracked")
+        @JsonProperty("is-tracked")
         @JsonInclude(JsonInclude.Include.NON_NULL)
         var tracked: Boolean? = null
 
-        @JsonProperty("last_item_scan")
+        @JsonProperty("last-item-scan")
         @JsonInclude(JsonInclude.Include.NON_NULL)
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         var lastItemScan: OffsetDateTime? = null

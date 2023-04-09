@@ -1,4 +1,4 @@
-package de.hypercdn.scmt.entities.json
+package de.hypercdn.scmt.entities.json.out
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -17,20 +17,21 @@ class MarketItemJson (
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var app: AppJson? = null
 
-    @JsonProperty("market_hash_name")
+    @JsonProperty("market-hash-name")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var name: String? = null
 
     @JsonProperty("properties")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     var properties: Properties? = null
 
     class Properties {
 
-        @JsonProperty("is_tracked")
+        @JsonProperty("is-tracked")
         @JsonInclude(JsonInclude.Include.NON_NULL)
         var tracked: Boolean? = null
 
-        @JsonProperty("last_item_scan")
+        @JsonProperty("last-item-scan")
         @JsonInclude(JsonInclude.Include.NON_NULL)
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         var lastItemScan: OffsetDateTime? = null

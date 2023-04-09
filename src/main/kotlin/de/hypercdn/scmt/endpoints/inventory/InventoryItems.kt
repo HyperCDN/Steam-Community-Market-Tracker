@@ -1,8 +1,8 @@
 package de.hypercdn.scmt.endpoints.inventory
 
-import de.hypercdn.scmt.entities.json.InventoryItemJson
-import de.hypercdn.scmt.entities.json.MarketItemJson
-import de.hypercdn.scmt.entities.json.MarketSnapshotJson
+import de.hypercdn.scmt.entities.json.out.InventoryItemJson
+import de.hypercdn.scmt.entities.json.out.MarketItemJson
+import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.InventoryItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
