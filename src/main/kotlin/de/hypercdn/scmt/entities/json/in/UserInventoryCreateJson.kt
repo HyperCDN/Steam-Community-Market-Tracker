@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 class UserInventoryCreateJson {
 
-    @JsonProperty("properties", required = true)
+    @JsonProperty("user-id", required = true)
     var userId: Long = -1
 
     @JsonProperty("properties")
