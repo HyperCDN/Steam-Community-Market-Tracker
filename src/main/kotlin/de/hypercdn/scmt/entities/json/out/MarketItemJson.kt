@@ -38,6 +38,9 @@ class MarketItemJson (
 
     }
 
+    @JsonProperty("last-snapshot")
+    var lastSnapshot: MarketSnapshotJson? = null
+
     fun includeApp(skip: Boolean = false, appProvider: ((app: App) -> AppJson?)? = null): MarketItemJson {
         if (marketItem == null || skip) return this
         this.app = appProvider?.invoke(marketItem.app)
@@ -56,6 +59,12 @@ class MarketItemJson (
             tracked = marketItem.tracked
             lastItemScan = marketItem.lastItemScan
         }
+        return this
+    }
+
+    fun includeSnapshot(skip: Boolean = false, snapshotProvider: () -> MarketSnapshotJson?): MarketItemJson {
+        if (marketItem == null || skip) return this
+        lastSnapshot = snapshotProvider.invoke()
         return this
     }
 

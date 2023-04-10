@@ -126,4 +126,19 @@ interface MarketSnapshotRepository: CrudRepository<MarketSnapshot, UUID> {
         @Param("items") items: List<MarketItem>
     ): List<MarketSnapshot>
 
+    @Query(
+        """
+        FROM MarketSnapshot snapshot
+        WHERE snapshot.marketItem = :item
+            AND snapshot.createdAt = (
+                SELECT MAX(inner_.createdAt)
+                FROM MarketSnapshot inner_
+                WHERE inner_.marketItem = snapshot.marketItem
+            )
+    """
+    )
+    fun getLatestFor(
+        @Param("item") item: MarketItem
+    ): MarketSnapshot?
+
 }
