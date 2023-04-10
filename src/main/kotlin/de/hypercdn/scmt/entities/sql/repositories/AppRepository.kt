@@ -50,4 +50,13 @@ interface AppRepository : CrudRepository<App, UUID> {
         @Param("appIds") appIds: Collection<Int>
     ): Int
 
+    @Query("""
+        SELECT 
+            SUM(1),
+            SUM(case when app.tracked = true then 1 else 0 end),
+            SUM(case when app.tracked = false then 1 else 0 end)
+        FROM App app
+    """)
+    fun getGlobalStatisticCounts(): Array<Int>
+
 }

@@ -47,4 +47,13 @@ interface UserInventoryRepository : CrudRepository<UserInventory, UUID> {
         @Param("scanDelayDuration") scanDelayDuration: Duration
     ): List<UserInventory>
 
+    @Query("""
+        SELECT 
+            SUM(1),
+            SUM(case when inv.tracked = true then 1 else 0 end),
+            SUM(case when inv.tracked = false then 1 else 0 end)
+        FROM UserInventory inv
+    """)
+    fun getGlobalStatisticCounts(): Array<Int>
+
 }

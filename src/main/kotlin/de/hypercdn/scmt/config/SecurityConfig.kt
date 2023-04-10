@@ -42,7 +42,8 @@ class SecurityConfig {
                 it.requestMatchers(
                     HttpMethod.GET,
                     "/apps",
-                    "/items/*"
+                    "/items/*",
+                    "/internal/**"
                 ).authenticated()
                 it.requestMatchers(
                     HttpMethod.POST,

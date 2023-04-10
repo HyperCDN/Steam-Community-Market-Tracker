@@ -52,4 +52,25 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         @Param("name") name: String
     ): MarketItem?
 
+    @Query("""
+        SELECT 
+            SUM(1),
+            SUM(case when item.tracked = true then 1 else 0 end),
+            SUM(case when item.tracked = false then 1 else 0 end)
+        FROM MarketItem item
+    """)
+    fun getGlobalStatisticCounts(): Array<Int>
+
+    @Query("""
+        SELECT 
+            SUM(1),
+            SUM(case when item.tracked = true then 1 else 0 end),
+            SUM(case when item.tracked = false then 1 else 0 end)
+        FROM MarketItem item
+            where item.app = :app
+    """)
+    fun getStatisticCounts(
+        @Param("app") app: App
+    ): Array<Int>
+
 }
