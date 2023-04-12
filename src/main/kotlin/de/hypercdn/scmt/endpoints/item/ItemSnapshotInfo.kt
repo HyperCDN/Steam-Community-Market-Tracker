@@ -1,6 +1,7 @@
 package de.hypercdn.scmt.endpoints.item
 
 import de.hypercdn.scmt.entities.json.out.MarketItemSnapshotJson
+import de.hypercdn.scmt.entities.json.out.PagedJson
 import de.hypercdn.scmt.entities.json.out.StatisticsJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
@@ -33,19 +34,25 @@ class ItemSnapshotInfo @Autowired constructor(
     fun getItemSnapshots(
         @PathVariable("appId") @Min(0) appId: Int,
         @PathVariable("marketHashName") @NotBlank marketHashName: String,
+        @RequestParam("start", required = false) startDate: OffsetDateTime?,
+        @RequestParam("end", required = false) endDate: OffsetDateTime?,
         @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
         @RequestParam("chunkSize", required = false, defaultValue = "10") @Min(1) @Max(250) chunkSize: Int
-    ): ResponseEntity<List<MarketItemSnapshotJson>> {
+    ): ResponseEntity<PagedJson<MarketItemSnapshotJson>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val item = marketItemRepository.findMarketItemByAppAndName(app, marketHashName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        val snapshots = snapshotRepository.getAllFor(item, PageRequest.of(page, chunkSize, Sort.by(Sort.Direction.DESC, "createdAt")))
+        val pageRequest = PageRequest.of(page, chunkSize, Sort.by(Sort.Direction.DESC, "createdAt"))
+        val snapshots = snapshotRepository.getAllFor(
+            item, startDate, endDate, pageRequest
+        )
         val snapshotJsons = snapshots.map {
             MarketItemSnapshotJson(it)
                 .includeAvailability()
                 .includePrice()
                 .includeProperties()
         }
-        return ResponseEntity(snapshotJsons, HttpStatus.OK)
+        val paged = PagedJson(pageRequest, snapshotJsons)
+        return ResponseEntity(paged, HttpStatus.OK)
     }
 
     @GetMapping("/item/{appId}/{marketHashName}/price", params = ["base=low"])

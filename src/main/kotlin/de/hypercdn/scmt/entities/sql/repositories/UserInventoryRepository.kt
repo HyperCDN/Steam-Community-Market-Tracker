@@ -2,6 +2,7 @@ package de.hypercdn.scmt.entities.sql.repositories
 
 import de.hypercdn.scmt.entities.sql.entities.App
 import de.hypercdn.scmt.entities.sql.entities.UserInventory
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -14,13 +15,11 @@ interface UserInventoryRepository : CrudRepository<UserInventory, UUID> {
         """
         FROM UserInventory inventory
         WHERE inventory.app = :app
-            AND inventory.tracked = true
-            AND inventory.lastItemScan < (Now() - :scanDelayDuration)
     """
     )
-    fun findUserInventoriesDueToItemScanByApp(
+    fun findUserInventoriesByApp(
         @Param("app") app: App,
-        @Param("scanDelayDuration") scanDelayDuration: Duration
+        pageable: Pageable = Pageable.unpaged()
     ): List<UserInventory>
 
     @Query(
@@ -54,6 +53,6 @@ interface UserInventoryRepository : CrudRepository<UserInventory, UUID> {
             SUM(case when inv.tracked = false then 1 else 0 end)
         FROM UserInventory inv
     """)
-    fun getGlobalStatisticCounts(): Array<Int>
+    fun getGlobalStatisticCounts(): Any
 
 }

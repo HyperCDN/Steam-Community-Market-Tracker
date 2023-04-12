@@ -28,6 +28,26 @@ class InventoryInfo @Autowired constructor(
     val snapshotRepository: MarketItemSnapshotRepository
 ) {
 
+    @GetMapping("/inventories/{appId}")
+    fun getInventoryInfo(
+        @PathVariable("appId") @Min(0) appId: Int,
+        @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
+        @RequestParam("count", required = false, defaultValue = "100") @Min(1) @Max(250) count: Int
+    ): ResponseEntity<PagedJson<UserInventoryJson>> {
+        val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val pageRequest = PageRequest.of(page, count)
+        val inventories = inventoryRepository.findUserInventoriesByApp(
+            app, pageRequest
+        )
+        val inventoryJsons = inventories.map {
+            UserInventoryJson(it)
+                .includeUserId()
+                .includeProperties()
+        }
+        val paged = PagedJson(pageRequest, inventoryJsons)
+        return ResponseEntity(paged, HttpStatus.OK)
+    }
+
     @GetMapping("/inventory/{appId}/{userId}")
     fun getInventoryInfo(
         @PathVariable("appId") @Min(0) appId: Int,
@@ -59,16 +79,15 @@ class InventoryInfo @Autowired constructor(
         @PathVariable("appId") @Min(0) appId: Int,
         @PathVariable("userId") @Min(0) userId: Long,
         @RequestParam("state-of", required = false) stateOf: OffsetDateTime?,
-        @RequestParam("include-latest-snapshot", required = false, defaultValue = "true") includeLatestSnapshot: Boolean,
+        @RequestParam("include-latest-snapshot", required = false, defaultValue = "false") includeLatestSnapshot: Boolean,
         @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
         @RequestParam("count", required = false, defaultValue = "100") @Min(1) @Max(250) count: Int
-    ): ResponseEntity<List<UserInventoryItemSnapshotJson>> {
+    ): ResponseEntity<PagedJson<UserInventoryItemSnapshotJson>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val inventory = inventoryRepository.findUserInventoryByAppAndUserId(app, userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val pageRequest = PageRequest.of(page, count)
         val items = userInventoryItemSnapshotRepository.getItemsFor(
-            inventory,
-            stateOf,
-            PageRequest.of(page, count)
+            inventory, stateOf, pageRequest
         )
         val snapshots = if (includeLatestSnapshot) snapshotRepository.getLatestFor(items.map { it.marketItem }).associateBy { it.marketItemUUID } else emptyMap()
         val itemJsons = items.map {
@@ -88,8 +107,9 @@ class InventoryInfo @Autowired constructor(
                             .includeProperties()
                     }
                 }
-        }.toList()
-        return ResponseEntity(itemJsons, HttpStatus.OK)
+        }
+        val paged = PagedJson(pageRequest, itemJsons)
+        return ResponseEntity(paged, HttpStatus.OK)
     }
 
 }

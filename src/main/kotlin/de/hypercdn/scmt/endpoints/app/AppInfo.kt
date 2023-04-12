@@ -1,6 +1,7 @@
 package de.hypercdn.scmt.endpoints.app
 
 import de.hypercdn.scmt.entities.json.out.AppJson
+import de.hypercdn.scmt.entities.json.out.PagedJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
@@ -26,10 +27,10 @@ class AppInfo @Autowired constructor(
         @RequestParam("tracked", required = false) tracked: Boolean?,
         @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
         @RequestParam("count", required = false, defaultValue = "100") @Min(1) @Max(250) count: Int
-    ): ResponseEntity<List<AppJson>> {
+    ): ResponseEntity<PagedJson<AppJson>> {
+        val pageRequest = PageRequest.of(page, count)
         val apps = appRepository.findAll(
-            tracked,
-            PageRequest.of(page, count)
+            tracked, pageRequest
         )
         val appJsons = apps.map {
             AppJson(it)
@@ -37,7 +38,8 @@ class AppInfo @Autowired constructor(
                 .includeName()
                 .includeProperties()
         }
-        return ResponseEntity(appJsons, HttpStatus.OK)
+        val paged = PagedJson(pageRequest, appJsons)
+        return ResponseEntity(paged, HttpStatus.OK)
     }
 
     @GetMapping("/app/{appId}")

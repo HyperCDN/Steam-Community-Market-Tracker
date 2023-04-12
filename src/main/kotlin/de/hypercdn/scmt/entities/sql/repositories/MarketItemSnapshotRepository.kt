@@ -17,10 +17,14 @@ interface MarketItemSnapshotRepository: CrudRepository<MarketItemSnapshot, UUID>
         """
         FROM MarketItemSnapshot snapshot
         WHERE snapshot.marketItem = :item
+            AND ((cast(:startDate as localdatetime) is null) OR snapshot.createdAt <= cast(:startDate as localdatetime))
+            AND ((cast(:endDate as localdatetime) is null) OR snapshot.createdAt >= cast(:endDate as localdatetime))
     """
     )
     fun getAllFor(
         @Param("item") item: MarketItem,
+        @Param("startDate") startDate: OffsetDateTime? = null,
+        @Param("endDate") endDate: OffsetDateTime? = null,
         page: Pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "createdAt"))
     ): List<MarketItemSnapshot>
 

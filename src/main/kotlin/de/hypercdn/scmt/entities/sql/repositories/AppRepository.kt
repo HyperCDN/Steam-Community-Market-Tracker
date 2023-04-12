@@ -60,6 +60,6 @@ interface AppRepository : CrudRepository<App, UUID> {
             SUM(case when app.tracked = false then 1 else 0 end)
         FROM App app
     """)
-    fun getGlobalStatisticCounts(): Array<Int>
+    fun getGlobalStatisticCounts(): Any
 
 }

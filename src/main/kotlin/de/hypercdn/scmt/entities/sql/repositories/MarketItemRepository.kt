@@ -58,7 +58,7 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
             SUM(case when item.tracked = false then 1 else 0 end)
         FROM MarketItem item
     """)
-    fun getGlobalStatisticCounts(): Array<Int>
+    fun getGlobalStatisticCounts(): Any
 
     @Query("""
         SELECT 
@@ -70,6 +70,6 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
     """)
     fun getStatisticCounts(
         @Param("app") app: App
-    ): Array<Int>
+    ): Any
 
 }

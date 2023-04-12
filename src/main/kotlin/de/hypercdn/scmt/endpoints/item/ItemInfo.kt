@@ -2,6 +2,7 @@ package de.hypercdn.scmt.endpoints.item
 
 import de.hypercdn.scmt.entities.json.out.MarketItemJson
 import de.hypercdn.scmt.entities.json.out.MarketItemSnapshotJson
+import de.hypercdn.scmt.entities.json.out.PagedJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
@@ -33,26 +34,26 @@ class ItemInfo @Autowired constructor(
         @RequestParam("tracked", required = false) tracked: Boolean?,
         @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
         @RequestParam("count", required = false, defaultValue = "100") @Min(1) @Max(250) count: Int
-    ): ResponseEntity<List<MarketItemJson>> {
+    ): ResponseEntity<PagedJson<MarketItemJson>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        val pageRequest = PageRequest.of(page, count)
         val items = marketItemRepository.getAllMarketItemsByApp(
-            app,
-            tracked,
-            PageRequest.of(page, count)
+            app, tracked, pageRequest
         )
         val itemJsons = items.map {
             MarketItemJson(it)
                 .includeName()
                 .includeProperties()
         }
-        return ResponseEntity(itemJsons, HttpStatus.OK)
+        val paged = PagedJson(pageRequest, itemJsons)
+        return ResponseEntity(paged, HttpStatus.OK)
     }
 
     @GetMapping("/item/{appId}/{marketHashName}")
     fun getItemInfo(
         @PathVariable("appId") @Min(0) appId: Int,
         @PathVariable("marketHashName") @NotBlank marketHashName: String,
-        @RequestParam("include-latest-snapshot", required = false, defaultValue = "true") includeLatestSnapshot: Boolean
+        @RequestParam("include-latest-snapshot", required = false, defaultValue = "false") includeLatestSnapshot: Boolean
     ): ResponseEntity<MarketItemJson> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val item = marketItemRepository.findMarketItemByAppAndName(app, marketHashName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
