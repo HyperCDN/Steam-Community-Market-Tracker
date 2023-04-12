@@ -22,6 +22,7 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         """
         FROM MarketItem item
         WHERE item.app = :app
+            AND item.app.tracked = true
             AND item.tracked = true
             AND item.lastItemScan is null OR item.lastItemScan < (NOW() - :scanDelayDuration)
     """
