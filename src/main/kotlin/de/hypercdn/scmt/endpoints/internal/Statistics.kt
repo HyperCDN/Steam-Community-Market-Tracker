@@ -15,8 +15,8 @@ class Statistics @Autowired constructor(
     val appRepository: AppRepository,
     val marketItemRepository: MarketItemRepository,
     val userInventoryRepository: UserInventoryRepository,
-    val marketSnapshotRepository: MarketSnapshotRepository,
-    val inventoryItemRepository: InventoryItemRepository
+    val marketItemSnapshotRepository: MarketItemSnapshotRepository,
+    val userInventoryItemSnapshotRepository: UserInventoryItemSnapshotRepository
 ) {
 
     @GetMapping("/internal/entity-count")
@@ -31,13 +31,13 @@ class Statistics @Autowired constructor(
             .put("total", marketItemGlobalStatistics[0])
             .put("tracked", marketItemGlobalStatistics[1])
             .put("not-tracked", marketItemGlobalStatistics[2])
-            .put("snapshots", marketSnapshotRepository.count())
+            .put("snapshots", marketItemSnapshotRepository.count())
         val userInventoryGlobalStatistics = userInventoryRepository.getGlobalStatisticCounts()
         val userInventoryStatistics = objectMapper.createObjectNode()
             .put("total", userInventoryGlobalStatistics[0])
             .put("tracked", userInventoryGlobalStatistics[1])
             .put("not-tracked", userInventoryGlobalStatistics[2])
-            .put("snapshots", inventoryItemRepository.count())
+            .put("snapshots", userInventoryItemSnapshotRepository.count())
         val responseJson = objectMapper.createObjectNode().apply {
             set<JsonNode>("apps", appStatistics)
             set<JsonNode>("items", marketItemStatistics)

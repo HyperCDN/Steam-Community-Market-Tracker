@@ -14,7 +14,7 @@ class UserInventory {
 
     @Id
     @Column(
-        name = "user_inventory_uuid",
+        name = "__uuid",
         nullable = false,
         updatable = false
     )
@@ -39,7 +39,7 @@ class UserInventory {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "app_uuid",
-        referencedColumnName = "app_uuid",
+        referencedColumnName = "__uuid",
         insertable = false,
         updatable = false
     )

@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
-import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
+import de.hypercdn.scmt.entities.sql.entities.MarketItemSnapshot
 import java.time.OffsetDateTime
 
 class MarketSnapshotJson(
     @JsonIgnore
-    val snapshot: MarketSnapshot? = null
+    val snapshot: MarketItemSnapshot? = null
 ) {
 
     @JsonProperty("item")

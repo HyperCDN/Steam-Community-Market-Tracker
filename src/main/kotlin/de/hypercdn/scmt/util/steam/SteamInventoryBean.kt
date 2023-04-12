@@ -1,10 +1,10 @@
 package de.hypercdn.scmt.util.steam
 
 import de.hypercdn.scmt.config.InventorySearchConfig
-import de.hypercdn.scmt.entities.sql.entities.InventoryItem
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
-import de.hypercdn.scmt.entities.sql.repositories.InventoryItemRepository
+import de.hypercdn.scmt.entities.sql.entities.UserInventoryItemSnapshot
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
+import de.hypercdn.scmt.entities.sql.repositories.UserInventoryItemSnapshotRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
 import de.hypercdn.scmt.util.delay.Delay
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
@@ -28,7 +28,7 @@ class SteamInventoryBean @Autowired constructor(
     var steamFetchService: SteamFetchService,
     val inventorySearchConfig: InventorySearchConfig,
     val inventoryRepository: UserInventoryRepository,
-    val inventoryItemRepository: InventoryItemRepository,
+    val userInventoryItemSnapshotRepository: UserInventoryItemSnapshotRepository,
     val marketItemRepository: MarketItemRepository
 ) {
 
@@ -60,9 +60,9 @@ class SteamInventoryBean @Autowired constructor(
         try {
             log.info("Starting update...")
             inventoryRepository.getInventoriesDueToItemScan(inventorySearchConfig.noUpdateBefore).forEach { inv ->
-                val inventoryItems = steamFetchService.retrieveInventory(inv.app.id, inv.userId)
+                val userInventoryItemsSnapshot = steamFetchService.retrieveInventory(inv.app.id, inv.userId)
                     .map {
-                        InventoryItem().apply {
+                        UserInventoryItemSnapshot().apply {
                             userInventoryUUID = inv.__uuid
                             val item = marketItemRepository.findMarketItemByAppAndName(inv.app, it.get("name").asText()) ?: marketItemRepository.save(MarketItem().apply {
                                 appUUID = inv.appUUID
@@ -71,7 +71,7 @@ class SteamInventoryBean @Autowired constructor(
                                 log.info("Adding unknown market item {} from inventory for user {} and app {}", name, inv.userId, inv.app.id)
                             })
                             marketItemUUID = item.__uuid
-                            identity = InventoryItem.Identity(
+                            identity = UserInventoryItemSnapshot.Identity(
                                 it.get("context-id").asLong(),
                                 it.get("asset-id").asLong(),
                                 it.get("class-id").asLong(),
@@ -81,14 +81,14 @@ class SteamInventoryBean @Autowired constructor(
                             automaticFetched = true
                         }
                     }.associateBy { it.identity }
-                val currentStateItems = inventoryItemRepository.getItemsCurrentlyInUserInventory(inv).associateBy { it.identity }
-                val keys = HashSet<InventoryItem.Identity>().apply {
-                    addAll(inventoryItems.keys)
+                val currentStateItems = userInventoryItemSnapshotRepository.getItemsCurrentlyInUserInventory(inv).associateBy { it.identity }
+                val keys = HashSet<UserInventoryItemSnapshot.Identity>().apply {
+                    addAll(userInventoryItemsSnapshot.keys)
                     addAll(currentStateItems.keys)
                 }
-                val pairs = keys.stream().map { key -> Pair(inventoryItems.get(key), currentStateItems.get(key)) }
-                val deleteItems = ArrayList<InventoryItem>()
-                val addItems = ArrayList<InventoryItem>()
+                val pairs = keys.stream().map { key -> Pair(userInventoryItemsSnapshot.get(key), currentStateItems.get(key)) }
+                val deleteItems = ArrayList<UserInventoryItemSnapshot>()
+                val addItems = ArrayList<UserInventoryItemSnapshot>()
                 pairs.forEach { pair ->
                     if (pair.first == null && pair.second != null) deleteItems.add(pair.second!!)
                     if (pair.first != null && pair.second == null) addItems.add(pair.first!!)
@@ -100,8 +100,8 @@ class SteamInventoryBean @Autowired constructor(
                     }
                 }
                 log.info("Found changes for +{} -{} for user {} and app {}", addItems.size, deleteItems.size, inv.userId, inv.app.id)
-                inventoryItemRepository.saveAll(deleteItems.map { it.apply { superseded = OffsetDateTime.now() } })
-                inventoryItemRepository.saveAll(addItems)
+                userInventoryItemSnapshotRepository.saveAll(deleteItems.map { it.apply { superseded = OffsetDateTime.now() } })
+                userInventoryItemSnapshotRepository.saveAll(addItems)
 
                 inventoryRepository.save(inv.apply { lastItemScan = OffsetDateTime.now() })
             }

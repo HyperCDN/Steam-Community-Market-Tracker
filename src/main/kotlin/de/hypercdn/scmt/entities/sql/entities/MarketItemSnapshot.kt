@@ -7,14 +7,14 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @Entity
-@Table(name = "market_snapshots")
+@Table(name = "market_item_snapshots")
 @DynamicInsert
 @DynamicUpdate
-class MarketSnapshot {
+class MarketItemSnapshot {
 
     @Id
     @Column(
-        name = "market_snapshot_uuid",
+        name = "__uuid",
         nullable = false,
         updatable = false
     )
@@ -32,7 +32,7 @@ class MarketSnapshot {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
         name = "market_item_uuid",
-        referencedColumnName = "market_item_uuid",
+        referencedColumnName = "__uuid",
         updatable = false,
         insertable = false
     )

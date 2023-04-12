@@ -145,6 +145,8 @@ class SteamFetchService @Autowired constructor(
                     put("instance-id", pair.first?.get("instanceid")?.asLong())
                     put("amount", pair.first?.get("amount")?.asInt())
                     put("name", pair.second?.get("market_hash_name")?.asText())
+                    put("marketable", pair.second?.get("marketable")?.asInt())
+                    put("tradable", pair.second?.get("tradable")?.asInt())
                 }
             }.toList()
         }

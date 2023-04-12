@@ -2,10 +2,10 @@ package de.hypercdn.scmt.util.steam
 
 import de.hypercdn.scmt.config.ItemPriceSearchConfig
 import de.hypercdn.scmt.config.ItemSearchConfig
-import de.hypercdn.scmt.entities.sql.entities.MarketSnapshot
+import de.hypercdn.scmt.entities.sql.entities.MarketItemSnapshot
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
-import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
+import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
 import de.hypercdn.scmt.util.delay.Delay
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
 import lombok.Synchronized
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class SteamMarketItemPriceBean @Autowired constructor(
     var appRepository: AppRepository,
     var marketItemRepository: MarketItemRepository,
-    var marketSnapshotRepository: MarketSnapshotRepository,
+    var marketItemSnapshotRepository: MarketItemSnapshotRepository,
     var steamFetchService: SteamFetchService,
     var itemSearchConfig: ItemSearchConfig,
     var itemPriceSearchConfig: ItemPriceSearchConfig
@@ -74,13 +74,13 @@ class SteamMarketItemPriceBean @Autowired constructor(
                                 }
                                 throw e
                             }
-                            marketSnapshotRepository.save(
-                                MarketSnapshot().apply {
+                            marketItemSnapshotRepository.save(
+                                MarketItemSnapshot().apply {
                                     marketItemUUID = marketItem.__uuid
-                                    stats = MarketSnapshot.Stats().apply {
+                                    stats = MarketItemSnapshot.Stats().apply {
                                         volume = priceOverview.get("volume")?.asInt()
                                     }
-                                    price = MarketSnapshot.Price().apply {
+                                    price = MarketItemSnapshot.Price().apply {
                                         lowestPrice = priceOverview.get("lowest-price")?.asDouble()
                                         medianPrice = priceOverview.get("median-price")?.asDouble()
                                         currency = priceOverview.get("currency")?.asText()

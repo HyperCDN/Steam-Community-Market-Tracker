@@ -14,7 +14,7 @@ class App {
 
     @Id
     @Column(
-        name = "app_uuid",
+        name = "__uuid",
         nullable = false,
         updatable = false
     )

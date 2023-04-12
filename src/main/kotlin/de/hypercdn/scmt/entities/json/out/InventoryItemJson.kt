@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
-import de.hypercdn.scmt.entities.sql.entities.InventoryItem
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.entities.UserInventory
+import de.hypercdn.scmt.entities.sql.entities.UserInventoryItemSnapshot
 import java.time.OffsetDateTime
 import java.util.*
 
 class InventoryItemJson(
     @JsonIgnore
-    val inventoryItem: InventoryItem? = null
+    val userInventoryItemSnapshot: UserInventoryItemSnapshot? = null
 ) {
 
     @JsonProperty("inventory")
@@ -75,41 +75,41 @@ class InventoryItemJson(
     var snapshot: MarketSnapshotJson? = null
 
     fun includeInventory(skip: Boolean = false, inventoryProvider: ((app: UserInventory) -> UserInventoryJson?)? = null): InventoryItemJson {
-        if (inventoryItem == null || skip) return this
-        inventory = inventoryProvider?.invoke(inventoryItem.userInventory)
+        if (userInventoryItemSnapshot == null || skip) return this
+        inventory = inventoryProvider?.invoke(userInventoryItemSnapshot.userInventory)
         return this
     }
 
     fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): InventoryItemJson {
-        if (inventoryItem == null || skip) return this
-        item = itemProvider?.invoke(inventoryItem.marketItem)
+        if (userInventoryItemSnapshot == null || skip) return this
+        item = itemProvider?.invoke(userInventoryItemSnapshot.marketItem)
         return this
     }
 
     fun includeIdentity(skip: Boolean = false): InventoryItemJson {
-        if (inventoryItem == null || skip) return this
+        if (userInventoryItemSnapshot == null || skip) return this
         identity = Identity().apply {
-            contextId = inventoryItem.identity.contextId
-            assetId = inventoryItem.identity.assetId
-            classId = inventoryItem.identity.classId
-            instanceId = inventoryItem.identity.instanceId
+            contextId = userInventoryItemSnapshot.identity.contextId
+            assetId = userInventoryItemSnapshot.identity.assetId
+            classId = userInventoryItemSnapshot.identity.classId
+            instanceId = userInventoryItemSnapshot.identity.instanceId
         }
         return this
     }
 
     fun includeProperties(skip: Boolean = false): InventoryItemJson {
-        if (inventoryItem == null || skip) return this
+        if (userInventoryItemSnapshot == null || skip) return this
         properties = Properties().apply {
-            amount = inventoryItem.amount
-            createdAt = inventoryItem.createdAt
-            superseded = inventoryItem.superseded
+            amount = userInventoryItemSnapshot.amount
+            createdAt = userInventoryItemSnapshot.createdAt
+            superseded = userInventoryItemSnapshot.superseded
         }
         return this
     }
 
     fun includeSnapshot(skip: Boolean = false, snapshotProvider: ((marketItemUUID: UUID) -> MarketSnapshotJson?)?): InventoryItemJson {
-        if (inventoryItem == null || skip) return this
-        snapshot = snapshotProvider?.invoke(inventoryItem.marketItemUUID)
+        if (userInventoryItemSnapshot == null || skip) return this
+        snapshot = snapshotProvider?.invoke(userInventoryItemSnapshot.marketItemUUID)
         return this
     }
 

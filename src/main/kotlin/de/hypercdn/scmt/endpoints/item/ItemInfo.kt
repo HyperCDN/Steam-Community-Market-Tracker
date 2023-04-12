@@ -4,7 +4,7 @@ import de.hypercdn.scmt.entities.json.out.MarketItemJson
 import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
-import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
+import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException
 class ItemInfo @Autowired constructor(
     val appRepository: AppRepository,
     val marketItemRepository: MarketItemRepository,
-    val snapshotRepository: MarketSnapshotRepository
+    val snapshotRepository: MarketItemSnapshotRepository
 ) {
 
     @GetMapping("/items/{appId}")

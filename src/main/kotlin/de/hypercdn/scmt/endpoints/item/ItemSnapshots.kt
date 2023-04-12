@@ -3,7 +3,7 @@ package de.hypercdn.scmt.endpoints.item
 import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
-import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
+import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
 import jakarta.validation.constraints.Min
 import org.hibernate.validator.constraints.Range
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException
 class ItemSnapshots @Autowired constructor(
     val appRepository: AppRepository,
     val marketItemRepository: MarketItemRepository,
-    val snapshotRepository: MarketSnapshotRepository
+    val snapshotRepository: MarketItemSnapshotRepository
 ) {
 
     @GetMapping("/item/{appId}/{marketHashName}/snapshots")

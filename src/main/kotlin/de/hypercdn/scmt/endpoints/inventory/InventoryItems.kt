@@ -4,8 +4,8 @@ import de.hypercdn.scmt.entities.json.out.InventoryItemJson
 import de.hypercdn.scmt.entities.json.out.MarketItemJson
 import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
-import de.hypercdn.scmt.entities.sql.repositories.InventoryItemRepository
-import de.hypercdn.scmt.entities.sql.repositories.MarketSnapshotRepository
+import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
+import de.hypercdn.scmt.entities.sql.repositories.UserInventoryItemSnapshotRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,8 +19,8 @@ import org.springframework.web.server.ResponseStatusException
 class InventoryItems @Autowired constructor(
     val appRepository: AppRepository,
     val inventoryRepository: UserInventoryRepository,
-    val inventoryItemRepository: InventoryItemRepository,
-    val snapshotRepository: MarketSnapshotRepository
+    val userInventoryItemSnapshotRepository: UserInventoryItemSnapshotRepository,
+    val snapshotRepository: MarketItemSnapshotRepository
 ) {
 
     @GetMapping("/inventory/{appId}/{userId}/items")
@@ -30,7 +30,7 @@ class InventoryItems @Autowired constructor(
     ): ResponseEntity<List<InventoryItemJson>> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val inventory = inventoryRepository.findUserInventoryByAppAndUserId(app, userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        val items = inventoryItemRepository.getItemsCurrentlyInUserInventory(inventory)
+        val items = userInventoryItemSnapshotRepository.getItemsCurrentlyInUserInventory(inventory)
         val snapshots = snapshotRepository.getLatestFor(items.map { it.marketItem }).associateBy { it.marketItemUUID }
         val itemJsons = items.map {
             InventoryItemJson(it)
