@@ -68,7 +68,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
                             val priceOverview = try {
                                 steamFetchService.retrievePriceOverviewFromSteam(app.id, marketItem.name)
                             } catch (e: SteamFetchService.HttpFetchException) {
-                                if (e.code == 404 && itemSearchConfig.disableNotFoundEntities) {
+                                if (e.code == 404 && itemSearchConfig.disableNotFoundEntities) { // steam may return 500 on not found entities
                                     marketItemRepository.save(marketItem.apply { tracked = false })
                                     return@inner
                                 }
@@ -88,8 +88,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
                                 }
                             )
                             // update timestamp
-                            marketItem.lastItemScan = OffsetDateTime.now()
-                            marketItemRepository.save(marketItem)
+                            marketItemRepository.save(marketItem.apply { lastItemScan = OffsetDateTime.now() })
                         }
                     log.info("Finished fetching item prices for app {}", app.id)
                 }

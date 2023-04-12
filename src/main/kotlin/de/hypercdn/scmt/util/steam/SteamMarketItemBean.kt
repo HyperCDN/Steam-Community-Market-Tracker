@@ -19,7 +19,6 @@ import org.springframework.retry.annotation.Retryable
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -59,7 +58,6 @@ class SteamMarketItemBean @Autowired constructor(
         }
         try {
             log.info("Starting update...")
-            LocalDateTime.now() + itemSearchConfig.noUpdateBefore
             appRepository.getAllAppsDueToItemScan(itemSearchConfig.noUpdateBefore).forEach { app ->
                 log.info("Fetching items for app {}", app.id)
                 var start = 0
