@@ -68,7 +68,8 @@ class SteamMarketItemPriceBean @Autowired constructor(
                             val priceOverview = try {
                                 steamFetchService.retrievePriceOverviewFromSteam(app.id, marketItem.name)
                             } catch (e: SteamFetchService.HttpFetchException) {
-                                if (e.code == 404 && itemSearchConfig.disableNotFoundEntities) { // steam may return 500 on not found entities
+                                if (e.code == 500 && marketItem.lastItemScan == null // steam may return 500 on not found entities, we assume this isn't an actual service failure if there are no previous records
+                                    && itemSearchConfig.disableNotFoundEntities ) {
                                     marketItemRepository.save(marketItem.apply { tracked = false })
                                     return@inner
                                 }

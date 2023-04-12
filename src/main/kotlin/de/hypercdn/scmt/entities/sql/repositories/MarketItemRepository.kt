@@ -23,15 +23,6 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         FROM MarketItem item
         WHERE item.app = :app
             AND item.tracked = true
-    """
-    )
-    fun getAllTrackedMarketItemsByApp(@Param("app") app: App): List<MarketItem>
-
-    @Query(
-        """
-        FROM MarketItem item
-        WHERE item.app = :app
-            AND item.tracked = true
             AND item.lastItemScan is null OR item.lastItemScan < (NOW() - :scanDelayDuration)
     """
     )
