@@ -81,7 +81,7 @@ class SteamInventoryBean @Autowired constructor(
                             automaticFetched = true
                         }
                     }.associateBy { it.identity }
-                val currentStateItems = userInventoryItemSnapshotRepository.getItemsCurrentlyInUserInventory(inv).associateBy { it.identity }
+                val currentStateItems = userInventoryItemSnapshotRepository.getItemsFor(inv, null).associateBy { it.identity }
                 val keys = HashSet<UserInventoryItemSnapshot.Identity>().apply {
                     addAll(userInventoryItemsSnapshot.keys)
                     addAll(currentStateItems.keys)

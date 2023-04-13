@@ -1,6 +1,7 @@
 package de.hypercdn.scmt.entities.sql.repositories
 
 import de.hypercdn.scmt.entities.sql.entities.App
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -10,24 +11,26 @@ import java.util.*
 
 interface AppRepository : CrudRepository<App, UUID> {
 
-    @Query(
-        """
+    @Query("""
         FROM App app
-        WHERE app.tracked = true
-        AND app.lastItemScan is null OR app.lastItemScan < (Now() - :scanDelayDuration)
-    """
-    )
-    fun getAllAppsDueToItemScan(
-        @Param("scanDelayDuration") scanDelayDuration: Duration
+        WHERE (:tracked is null OR app.tracked = :tracked)
+    """)
+    fun findAll(
+        @Param("tracked") tracked: Boolean? = null,
+        pageable: Pageable = Pageable.unpaged()
     ): List<App>
 
     @Query(
         """
         FROM App app
         WHERE app.tracked = true
+            AND (app.lastItemScan is null 
+                OR app.lastItemScan < (Now() - :scanDelayDuration))
     """
     )
-    fun getAllTrackedApps(): List<App>
+    fun getAllAppsDueToItemScan(
+        @Param("scanDelayDuration") scanDelayDuration: Duration
+    ): List<App>
 
     @Query(
         """

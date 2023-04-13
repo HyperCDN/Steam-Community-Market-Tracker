@@ -57,6 +57,8 @@ class SecurityConfig {
                 ).authenticated()
                 it.requestMatchers(
                     HttpMethod.DELETE,
+                    "/app/*",
+                    "/item/*/*",
                     "/inventory/*"
                 ).authenticated()
                 // exposing the api documentation behind /docs

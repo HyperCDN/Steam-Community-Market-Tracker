@@ -2,6 +2,7 @@ package de.hypercdn.scmt.entities.sql.repositories
 
 import de.hypercdn.scmt.entities.sql.entities.App
 import de.hypercdn.scmt.entities.sql.entities.MarketItem
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -14,9 +15,15 @@ interface MarketItemRepository : CrudRepository<MarketItem, UUID> {
         """
         FROM MarketItem item
         WHERE item.app = :app
+            AND (:tracked is null 
+                OR (item.tracked = :tracked AND item.app.tracked = :tracked))
     """
     )
-    fun getAllMarketItemsByApp(@Param("app") app: App): List<MarketItem>
+    fun getAllMarketItemsByApp(
+        @Param("app") app: App,
+        @Param("tracked") tracked: Boolean? = null,
+        pageable: Pageable = Pageable.unpaged()
+    ): List<MarketItem>
 
     @Query(
         """

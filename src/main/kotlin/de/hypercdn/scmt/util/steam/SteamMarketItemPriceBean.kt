@@ -59,7 +59,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
         }
         try {
             log.info("Starting update...")
-            appRepository.getAllTrackedApps()
+            appRepository.findAll(tracked = true)
                 .forEach { app ->
                     log.info("Fetching item prices for app {}", app.id)
                     marketItemRepository.getMarketItemsDueToItemScan(app, itemPriceSearchConfig.noUpdateBefore)

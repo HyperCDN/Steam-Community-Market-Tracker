@@ -66,6 +66,6 @@ class UserInventory {
         nullable = false
     )
     @ColumnDefault("NULL")
-    lateinit var lastItemScan: OffsetDateTime
+    var lastItemScan: OffsetDateTime? = null
 
 }

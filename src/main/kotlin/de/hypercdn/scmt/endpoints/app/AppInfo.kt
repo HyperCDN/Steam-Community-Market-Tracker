@@ -2,15 +2,20 @@ package de.hypercdn.scmt.endpoints.app
 
 import de.hypercdn.scmt.entities.json.out.AppJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
+@Validated
 @RestController
 class AppInfo @Autowired constructor(
     val appRepository: AppRepository
@@ -18,9 +23,14 @@ class AppInfo @Autowired constructor(
 
     @GetMapping("/apps")
     fun getAppList(
-        @RequestParam("only-tracked", required = false, defaultValue = "false") onlyTracked: Boolean
+        @RequestParam("tracked", required = false) tracked: Boolean?,
+        @RequestParam("page", required = false, defaultValue = "0") @Min(0) page: Int,
+        @RequestParam("count", required = false, defaultValue = "100") @Min(1) @Max(250) count: Int
     ): ResponseEntity<List<AppJson>> {
-        val apps = if (onlyTracked) appRepository.getAllTrackedApps() else appRepository.findAll()
+        val apps = appRepository.findAll(
+            tracked,
+            PageRequest.of(page, count)
+        )
         val appJsons = apps.map {
             AppJson(it)
                 .includeId()
@@ -32,7 +42,7 @@ class AppInfo @Autowired constructor(
 
     @GetMapping("/app/{appId}")
     fun getAppInfo(
-        @PathVariable("appId") appId: Int
+        @PathVariable("appId") @Min(0) appId: Int
     ): ResponseEntity<AppJson> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val appJson = AppJson(app)

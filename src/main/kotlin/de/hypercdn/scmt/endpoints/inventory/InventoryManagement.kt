@@ -7,12 +7,15 @@ import de.hypercdn.scmt.entities.json.out.UserInventoryJson
 import de.hypercdn.scmt.entities.sql.entities.UserInventory
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.UserInventoryRepository
+import jakarta.validation.constraints.Min
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
+@Validated
 @RestController
 class InventoryManagement @Autowired constructor(
     val appRepository: AppRepository,
@@ -22,7 +25,7 @@ class InventoryManagement @Autowired constructor(
     @PostMapping("/inventory/{appId}")
     fun addInventory(
         @RequestBody requestBody: UserInventoryCreateJson,
-        @PathVariable("appId") appId: Int
+        @PathVariable("appId") @Min(0) appId: Int
     ): ResponseEntity<UserInventoryJson> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         inventoryRepository.findUserInventoryByAppAndUserId(app, requestBody.userId)?.let {
@@ -50,8 +53,8 @@ class InventoryManagement @Autowired constructor(
     @PatchMapping("/inventory/{appId}/{userId}")
     fun updateInventorySettings(
         @RequestBody requestBody: UserInventoryUpdateJson,
-        @PathVariable("appId") appId: Int,
-        @PathVariable("userId") userId: Long,
+        @PathVariable("appId") @Min(0) appId: Int,
+        @PathVariable("userId") @Min(0) userId: Long,
     ): ResponseEntity<UserInventoryJson> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val inventory = inventoryRepository.findUserInventoryByAppAndUserId(app, userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
@@ -73,8 +76,8 @@ class InventoryManagement @Autowired constructor(
 
     @DeleteMapping("/inventory/{appId}/{userId}")
     fun deleteInventor(
-        @PathVariable("appId") appId: Int,
-        @PathVariable("userId") userId: Long,
+        @PathVariable("appId") @Min(0) appId: Int,
+        @PathVariable("userId") @Min(0) userId: Long,
     ): ResponseEntity<Void> {
         val app = appRepository.findAppByAppId(appId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         val inventory = inventoryRepository.findUserInventoryByAppAndUserId(app, userId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
