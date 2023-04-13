@@ -1,7 +1,7 @@
 package de.hypercdn.scmt.endpoints.item
 
 import de.hypercdn.scmt.entities.json.out.MarketItemJson
-import de.hypercdn.scmt.entities.json.out.MarketSnapshotJson
+import de.hypercdn.scmt.entities.json.out.MarketItemSnapshotJson
 import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
@@ -46,7 +46,7 @@ class ItemInfo @Autowired constructor(
             .includeName()
             .includeProperties()
             .includeSnapshot(lastSnapshot == null) {
-                MarketSnapshotJson(lastSnapshot)
+                MarketItemSnapshotJson(lastSnapshot)
                     .includeAvailability()
                     .includePrice()
                     .includeProperties()

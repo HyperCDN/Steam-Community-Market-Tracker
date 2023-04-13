@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class Statistics @Autowired constructor(
+class EntityCount @Autowired constructor(
     val objectMapper: ObjectMapper,
     val appRepository: AppRepository,
     val marketItemRepository: MarketItemRepository,
@@ -20,7 +20,7 @@ class Statistics @Autowired constructor(
 ) {
 
     @GetMapping("/internal/entity-count")
-    fun getGlobalEntityStatistic(): ResponseEntity<JsonNode>{
+    fun getGlobalEntityCount(): ResponseEntity<JsonNode>{
         val appGlobalStatistics = appRepository.getGlobalStatisticCounts()
         val appStatistics = objectMapper.createObjectNode()
             .put("total", appGlobalStatistics[0])

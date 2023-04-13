@@ -10,7 +10,7 @@ import de.hypercdn.scmt.entities.sql.entities.UserInventoryItemSnapshot
 import java.time.OffsetDateTime
 import java.util.*
 
-class InventoryItemJson(
+class UserInventoryItemSnapshotJson(
     @JsonIgnore
     val userInventoryItemSnapshot: UserInventoryItemSnapshot? = null
 ) {
@@ -72,21 +72,21 @@ class InventoryItemJson(
 
     @JsonProperty("last-snapshot")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    var snapshot: MarketSnapshotJson? = null
+    var snapshot: MarketItemSnapshotJson? = null
 
-    fun includeInventory(skip: Boolean = false, inventoryProvider: ((app: UserInventory) -> UserInventoryJson?)? = null): InventoryItemJson {
+    fun includeInventory(skip: Boolean = false, inventoryProvider: ((app: UserInventory) -> UserInventoryJson?)? = null): de.hypercdn.scmt.entities.json.out.UserInventoryItemSnapshotJson {
         if (userInventoryItemSnapshot == null || skip) return this
         inventory = inventoryProvider?.invoke(userInventoryItemSnapshot.userInventory)
         return this
     }
 
-    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): InventoryItemJson {
+    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): de.hypercdn.scmt.entities.json.out.UserInventoryItemSnapshotJson {
         if (userInventoryItemSnapshot == null || skip) return this
         item = itemProvider?.invoke(userInventoryItemSnapshot.marketItem)
         return this
     }
 
-    fun includeIdentity(skip: Boolean = false): InventoryItemJson {
+    fun includeIdentity(skip: Boolean = false): de.hypercdn.scmt.entities.json.out.UserInventoryItemSnapshotJson {
         if (userInventoryItemSnapshot == null || skip) return this
         identity = Identity().apply {
             contextId = userInventoryItemSnapshot.identity.contextId
@@ -97,7 +97,7 @@ class InventoryItemJson(
         return this
     }
 
-    fun includeProperties(skip: Boolean = false): InventoryItemJson {
+    fun includeProperties(skip: Boolean = false): de.hypercdn.scmt.entities.json.out.UserInventoryItemSnapshotJson {
         if (userInventoryItemSnapshot == null || skip) return this
         properties = Properties().apply {
             amount = userInventoryItemSnapshot.amount
@@ -107,7 +107,7 @@ class InventoryItemJson(
         return this
     }
 
-    fun includeSnapshot(skip: Boolean = false, snapshotProvider: ((marketItemUUID: UUID) -> MarketSnapshotJson?)?): InventoryItemJson {
+    fun includeSnapshot(skip: Boolean = false, snapshotProvider: ((marketItemUUID: UUID) -> MarketItemSnapshotJson?)?): de.hypercdn.scmt.entities.json.out.UserInventoryItemSnapshotJson {
         if (userInventoryItemSnapshot == null || skip) return this
         snapshot = snapshotProvider?.invoke(userInventoryItemSnapshot.marketItemUUID)
         return this

@@ -39,7 +39,7 @@ class MarketItemJson (
     }
 
     @JsonProperty("last-snapshot")
-    var lastSnapshot: MarketSnapshotJson? = null
+    var lastSnapshot: MarketItemSnapshotJson? = null
 
     fun includeApp(skip: Boolean = false, appProvider: ((app: App) -> AppJson?)? = null): MarketItemJson {
         if (marketItem == null || skip) return this
@@ -62,7 +62,7 @@ class MarketItemJson (
         return this
     }
 
-    fun includeSnapshot(skip: Boolean = false, snapshotProvider: () -> MarketSnapshotJson?): MarketItemJson {
+    fun includeSnapshot(skip: Boolean = false, snapshotProvider: () -> MarketItemSnapshotJson?): MarketItemJson {
         if (marketItem == null || skip) return this
         lastSnapshot = snapshotProvider.invoke()
         return this

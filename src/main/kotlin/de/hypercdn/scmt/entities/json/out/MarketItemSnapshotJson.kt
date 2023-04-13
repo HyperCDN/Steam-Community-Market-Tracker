@@ -8,7 +8,7 @@ import de.hypercdn.scmt.entities.sql.entities.MarketItem
 import de.hypercdn.scmt.entities.sql.entities.MarketItemSnapshot
 import java.time.OffsetDateTime
 
-class MarketSnapshotJson(
+class MarketItemSnapshotJson(
     @JsonIgnore
     val snapshot: MarketItemSnapshot? = null
 ) {
@@ -70,13 +70,13 @@ class MarketSnapshotJson(
 
     }
 
-    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): MarketSnapshotJson {
+    fun includeItem(skip: Boolean = false, itemProvider: ((item: MarketItem) -> MarketItemJson?)? = null): MarketItemSnapshotJson {
         if (snapshot == null || skip) return this
         this.item = itemProvider?.invoke(snapshot.marketItem)
         return this
     }
 
-    fun includeProperties(skip: Boolean = false): MarketSnapshotJson {
+    fun includeProperties(skip: Boolean = false): MarketItemSnapshotJson {
         if (snapshot == null || skip) return this
         this.properties = Properties().apply {
             timestamp = snapshot.createdAt
@@ -84,7 +84,7 @@ class MarketSnapshotJson(
         return this
     }
 
-    fun includeAvailability(skip: Boolean = false): MarketSnapshotJson {
+    fun includeAvailability(skip: Boolean = false): MarketItemSnapshotJson {
         if (snapshot == null || skip) return this
         this.availability = MarketItemAvailabilityJson().apply {
             listings = snapshot.stats.listings
@@ -93,7 +93,7 @@ class MarketSnapshotJson(
         return this
     }
 
-    fun includePrice(skip: Boolean = false): MarketSnapshotJson {
+    fun includePrice(skip: Boolean = false): MarketItemSnapshotJson {
         if (snapshot == null || skip) return this
         this.price = MarketItemPriceJson().apply {
             lowestPrice = snapshot.price.lowestPrice
