@@ -23,7 +23,7 @@ class SteamAppBean @Autowired constructor(
     var appRepository: AppRepository
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamAppBean::class.java)
+    val log: Logger = LoggerFactory.getLogger(SteamAppBean::class.java)
     var running: AtomicBoolean = AtomicBoolean(false)
 
     @Async

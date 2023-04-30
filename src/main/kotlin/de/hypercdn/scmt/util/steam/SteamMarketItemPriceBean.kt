@@ -7,6 +7,7 @@ import de.hypercdn.scmt.entities.sql.repositories.AppRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemRepository
 import de.hypercdn.scmt.entities.sql.repositories.MarketItemSnapshotRepository
 import de.hypercdn.scmt.util.delay.Delay
+import de.hypercdn.scmt.util.http.HttpFetchException
 import de.hypercdn.scmt.util.steam.api.SteamFetchService
 import lombok.Synchronized
 import org.slf4j.Logger
@@ -30,7 +31,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
     var itemPriceSearchConfig: ItemPriceSearchConfig
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamMarketItemPriceBean::class.java)
+    val log: Logger = LoggerFactory.getLogger(SteamMarketItemPriceBean::class.java)
     var running: AtomicBoolean = AtomicBoolean(false)
 
     @Async
@@ -64,7 +65,7 @@ class SteamMarketItemPriceBean @Autowired constructor(
                             log.info("Fetching item price for item {} ({}) from app {}", marketItem.__uuid, marketItem.name, app.id)
                             val priceOverview = try {
                                 steamFetchService.retrievePriceOverviewFromSteam(app.id, marketItem.name)
-                            } catch (e: SteamFetchService.HttpFetchException) {
+                            } catch (e: HttpFetchException) {
                                 if (e.code == 500 && marketItem.lastItemScan == null // steam may return 500 on not found entities, we assume this isn't an actual service failure if there are no previous records
                                     && itemSearchConfig.disableNotFoundEntities ) {
                                     marketItemRepository.save(marketItem.apply { tracked = false })

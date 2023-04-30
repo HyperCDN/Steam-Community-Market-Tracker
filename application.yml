@@ -30,13 +30,20 @@ steam-community-market-tracker:
     update-on-startup-delay: 15m
     update-on-cron: true
     cron: "0 0 */1 * * *" #  every hour
-    no-update-before: 12h
+    no-update-before: 24h
   inventory-search: # search for inventories 5min after startup and every hour. previous update must be older than 12 hours
     update-on-startup: true
     update-on-startup-delay: 5m
     update-on-cron: true
     cron: "0 0 */1 * * *" # every hour
-    no-update-before: 12h
+    no-update-before: 24h
+  proxy:
+    enabled: true
+    custom-proxies: # only socks5 proxies
+      - ip:
+        port:
+        username:
+        password:
 
 
 spring:

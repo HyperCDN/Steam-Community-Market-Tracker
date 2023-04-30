@@ -3,41 +3,39 @@ package de.hypercdn.scmt.util.steam.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.hypercdn.scmt.config.MiscConfig
-import de.hypercdn.scmt.util.code429.Code429
 import de.hypercdn.scmt.util.data.parseCurrencyToNumber
 import de.hypercdn.scmt.util.data.parseNumberWithDecorations
 import de.hypercdn.scmt.util.delay.Delay
+import de.hypercdn.scmt.util.http.HttpFetchException
+import de.hypercdn.scmt.util.http.SCMTProxiedCallManager
 import lombok.Synchronized
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.retry.annotation.Backoff
-import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
 
 @Component
 class SteamFetchService @Autowired constructor(
-    val okHttpClient: OkHttpClient,
+    val proxyClient: SCMTProxiedCallManager,
     val objectMapper: ObjectMapper,
     val miscConfig: MiscConfig
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamFetchService::class.java)
+    val log: Logger = LoggerFactory.getLogger(SteamFetchService::class.java)
 
     @Synchronized
     fun retrieveAppListFromGithub(): List<JsonNode> {
-        log.info("Fetching app id list from github")
+        log.debug("Fetching app id list from github")
         val request = Request.Builder()
             .url("https://raw.githubusercontent.com/dgibbs64/SteamCMD-AppID-List/main/steamcmd_appid.json")
             .build()
-        okHttpClient.newCall(request).execute().use {
+        proxyClient.newCall(request).execute().use {
             if (!it.isSuccessful)
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
             return objectMapper
-                .readTree(it.body?.string())
+                .readTree(it.body.string())
                 .get("applist")
                 .get("apps")
                 .map {
@@ -49,18 +47,16 @@ class SteamFetchService @Autowired constructor(
     }
 
     @Synchronized
-    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
-    @Code429
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-price-search")
     fun retrievePriceOverviewFromSteam(appId: Int, name: String, currency: Int = miscConfig.currency): JsonNode {
-        log.info("Fetching price overview from steam for item {} from app {}", name, appId)
+        log.debug("Fetching price overview from steam for item {} from app {}", name, appId)
         val request = Request.Builder()
             .url("https://steamcommunity.com/market/priceoverview/?appid=${appId}&market_hash_name=${URLEncoder.encode(name, Charsets.UTF_8)}&currency=${currency}")
             .build()
-        okHttpClient.newCall(request).execute().use {
+        proxyClient.newCall(request).execute().use {
             if (!it.isSuccessful)
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
-            val json = objectMapper.readTree(it.body?.string())
+            val json = objectMapper.readTree(it.body.string())
             if (json.get("success")?.asBoolean() != true)
                 throw HttpFetchException(it.code, "Body indicated failure for ${request.url}")
             return objectMapper.createObjectNode().apply {
@@ -83,19 +79,17 @@ class SteamFetchService @Autowired constructor(
 
 
     @Synchronized
-    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
-    @Code429
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-search")
     fun retrieveMarketItemsFromSteam(appId: Int, start: Int = 0, count: Int = 100): List<JsonNode> {
-        log.info("Fetching items from steam for app {} (start: {})", appId, start)
+        log.debug("Fetching items from steam for app {} (start: {})", appId, start)
         val request = Request.Builder()
             .url("https://steamcommunity.com/market/search/render/?appid=${appId}&norender=1&start=${start}&count=${count}")
             .build()
-        okHttpClient.newCall(request).execute().use {
+        proxyClient.newCall(request).execute().use {
             if (!it.isSuccessful)
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
             return objectMapper
-                .readTree(it.body?.string())
+                .readTree(it.body.string())
                 .get("results")
                 .map {
                     objectMapper.createObjectNode().apply {
@@ -113,18 +107,16 @@ class SteamFetchService @Autowired constructor(
     }
 
     @Synchronized
-    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, multiplier = 2.0, maxDelay = 240_000))
-    @Code429
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-inventory-search")
     fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
-        log.info("Fetching inventory from steam for user {} and app {}", userId, appId)
+        log.debug("Fetching inventory from steam for user {} and app {}", userId, appId)
         val request = Request.Builder()
             .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
             .build()
-        okHttpClient.newCall(request).execute().use {
+        proxyClient.newCall(request).execute().use {
             if (!it.isSuccessful)
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
-            val payload = objectMapper.readTree(it.body?.string())
+            val payload = objectMapper.readTree(it.body.string())
             val assets = payload.get("assets").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }
             val descriptions = payload.get("descriptions").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }
             val keys = HashSet<Pair<Long, Long>>().apply {
@@ -147,10 +139,5 @@ class SteamFetchService @Autowired constructor(
             }.toList()
         }
     }
-
-    class HttpFetchException(
-        var code: Int,
-        override var message: String? = "${code}: No Message Provided"
-    ) : RuntimeException("${code}: $message")
 
 }

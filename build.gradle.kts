@@ -32,6 +32,7 @@ repositories {
 	mavenCentral()
 	maven { url = uri("https://repo.spring.io/milestone") }
 	maven { url = uri("https://repo.spring.io/snapshot") }
+	maven { url = uri ("https://jitpack.io") }
 }
 
 dependencies {
@@ -70,11 +71,15 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
-	implementation("com.squareup.okhttp3:okhttp:4.10.0")
+	implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
+
+	implementation("org.springframework.batch:spring-batch-core:5.0.1")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 
+	implementation("io.github.HyperCDN:sockslib:ce6723d340996386067261e53928dc53f078a3b7")
+	implementation("io.github.HyperCDN:okhttp-ktx:80b5fe7195933c6be7c0508b112439289cbaf195")
 }
 
 tasks.withType<KotlinCompile> {

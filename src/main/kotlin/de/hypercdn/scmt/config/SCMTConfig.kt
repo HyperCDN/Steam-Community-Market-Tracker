@@ -1,5 +1,6 @@
 package de.hypercdn.scmt.config
 
+import de.hypercdn.scmt.util.http.SocksProxyConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled
@@ -19,6 +20,13 @@ class RateLimitConfig {
     var marketItemSearch: Duration = Duration.ZERO
     var marketItemPriceSearch: Duration = Duration.ZERO
     var marketInventorySearch: Duration = Duration.ZERO
+}
+
+@Configuration
+@ConfigurationProperties(prefix = "steam-community-market-tracker.proxy")
+class ProxyConfig {
+    var enabled: Boolean = false
+    var proxies: List<SocksProxyConfig> = emptyList()
 }
 
 @Configuration

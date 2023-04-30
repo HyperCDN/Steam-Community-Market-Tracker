@@ -29,7 +29,7 @@ class SteamMarketItemBean @Autowired constructor(
     var itemSearchConfig: ItemSearchConfig
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamMarketItemBean::class.java)
+    val log: Logger = LoggerFactory.getLogger(SteamMarketItemBean::class.java)
     var running: AtomicBoolean = AtomicBoolean(false)
 
     @Async

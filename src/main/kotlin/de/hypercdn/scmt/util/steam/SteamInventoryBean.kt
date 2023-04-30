@@ -30,7 +30,7 @@ class SteamInventoryBean @Autowired constructor(
     val marketItemRepository: MarketItemRepository
 ) {
 
-    var log: Logger = LoggerFactory.getLogger(SteamInventoryBean::class.java)
+    val log: Logger = LoggerFactory.getLogger(SteamInventoryBean::class.java)
     var running: AtomicBoolean = AtomicBoolean(false)
 
     @Async
@@ -57,6 +57,7 @@ class SteamInventoryBean @Autowired constructor(
         try {
             log.info("Starting update...")
             inventoryRepository.getInventoriesDueToItemScan(inventorySearchConfig.noUpdateBefore).forEach { inv ->
+                log.info("Updating inventory for user {} and app {}", inv.userId, inv.app.id)
                 val userInventoryItemsSnapshot = steamFetchService.retrieveInventory(inv.app.id, inv.userId)
                     .map {
                         UserInventoryItemSnapshot().apply {
