@@ -38,9 +38,9 @@ steam-community-market-tracker:
     cron: "0 0 */1 * * *" # every hour
     no-update-before: 24h
   proxy:
-    enabled: true
-    custom-proxies: # only socks5 proxies
-      - ip:
+    enabled: false
+    proxies: # only socks5 proxies
+      - hostname:
         port:
         username:
         password:

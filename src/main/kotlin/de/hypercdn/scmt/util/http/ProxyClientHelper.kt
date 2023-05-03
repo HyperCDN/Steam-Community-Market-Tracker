@@ -2,13 +2,14 @@ package de.hypercdn.scmt.util.http
 
 import de.hypercdn.extensions.okhttpktx.proxy.ExtendedProxy
 import de.hypercdn.extensions.okhttpktx.proxy.manager.FeedbackAwareCallManager
-import de.hypercdn.extensions.okhttpktx.proxy.provider.FeedbackAwareProxyProvider
-import de.hypercdn.extensions.okhttpktx.proxy.provider.FeedbackAwareRotatingProxyProvider
+import de.hypercdn.extensions.okhttpktx.proxy.provider.imp.RotatingFeedbackAwareProxyProvider
 import de.hypercdn.extensions.okhttpktx.proxy.utils.*
 import de.hypercdn.scmt.config.ProxyConfig
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,6 +17,7 @@ import sockslib.common.UsernamePasswordCredentials
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.time.OffsetDateTime
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.toJavaDuration
@@ -25,6 +27,8 @@ class SCMTProxyClientHelper @Autowired constructor(
     val okHttpClient: OkHttpClient,
     val proxyConfig: ProxyConfig
 ){
+
+    private val log: Logger = LoggerFactory.getLogger(SCMTProxyClientHelper::class.java)
 
     @Bean
     fun scmtCallManager(): SCMTProxiedCallManager {
@@ -38,8 +42,10 @@ class SCMTProxyClientHelper @Autowired constructor(
             put(disableOnStatusCode(403), { enableAfter(24.hours) })
             put(disableOnException(), { enableAfter(1.hours) })
         }
-        val proxyProvider = FeedbackAwareRotatingProxyProvider(proxyConfig.proxies.map { it.asExtendedProxy() }, handlingRules)
+        val proxies = ConcurrentLinkedQueue(proxyConfig.proxies.map { it.asExtendedProxy() as Proxy }.toMutableList())
+        log.info("Using ${proxies.size} proxies to dispatch requests. (enabled = ${proxyConfig.enabled})")
 
+        val proxyProvider = RotatingFeedbackAwareProxyProvider(proxies, handlingRules)
         return SCMTProxiedCallManager(proxyConfig, okHttpClient, proxyProvider)
     }
 
@@ -60,7 +66,7 @@ class SocksProxyConfig(
 
 }
 
-class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpClient, proxyProvider: FeedbackAwareProxyProvider): FeedbackAwareCallManager(okHttpClient, proxyProvider) {
+class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpClient, proxyProvider: RotatingFeedbackAwareProxyProvider): FeedbackAwareCallManager(okHttpClient, proxyProvider) {
 
     override fun newCall(request: Request): Call {
         if (!proxyConfig.enabled)
