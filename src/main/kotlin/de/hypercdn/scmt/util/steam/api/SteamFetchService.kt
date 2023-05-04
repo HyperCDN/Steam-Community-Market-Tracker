@@ -13,6 +13,8 @@ import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import java.net.URLEncoder
 
@@ -48,6 +50,7 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-price-search")
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 30_000, maxDelay = 120_000, multiplier = 2.0))
     fun retrievePriceOverviewFromSteam(appId: Int, name: String, currency: Int = miscConfig.currency): JsonNode {
         log.debug("Fetching price overview from steam for item {} from app {}", name, appId)
         val request = Request.Builder()
@@ -80,6 +83,7 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-item-search")
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 15_000, maxDelay = 60_000, multiplier = 2.0))
     fun retrieveMarketItemsFromSteam(appId: Int, start: Int = 0, count: Int = 100): List<JsonNode> {
         log.debug("Fetching items from steam for app {} (start: {})", appId, start)
         val request = Request.Builder()
@@ -108,6 +112,7 @@ class SteamFetchService @Autowired constructor(
 
     @Synchronized
     @Delay(amountPropertyValue = "steam-community-market-tracker.rate-limits.market-inventory-search")
+    @Retryable(maxAttempts = 3, backoff = Backoff(delay = 60_000, maxDelay = 960_000, multiplier = 4.0))
     fun retrieveInventory(appId: Int, userId: Long, count: Int = 2000, language: String = "english"): List<JsonNode> {
         log.debug("Fetching inventory from steam for user {} and app {}", userId, appId)
         val request = Request.Builder()
