@@ -20,7 +20,7 @@ class EntityCount @Autowired constructor(
 ) {
 
     @GetMapping("/internal/entity-count")
-    fun getGlobalEntityCount(): ResponseEntity<JsonNode>{
+    fun getGlobalEntityCount(): ResponseEntity<JsonNode> {
         val appGlobalStatistics = appRepository.getGlobalStatisticCounts() as Array<*>
         val appStatistics = objectMapper.createObjectNode()
             .put("total", appGlobalStatistics[0] as Long)

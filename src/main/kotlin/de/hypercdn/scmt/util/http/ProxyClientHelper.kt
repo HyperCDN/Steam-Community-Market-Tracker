@@ -26,7 +26,7 @@ import kotlin.time.toJavaDuration
 class SCMTProxyClientHelper @Autowired constructor(
     val okHttpClient: OkHttpClient,
     val proxyConfig: ProxyConfig
-){
+) {
 
     private val log: Logger = LoggerFactory.getLogger(SCMTProxyClientHelper::class.java)
 
@@ -66,7 +66,7 @@ class SocksProxyConfig(
 
 }
 
-class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpClient, proxyProvider: RotatingFeedbackAwareProxyProvider): FeedbackAwareCallManager(okHttpClient, proxyProvider) {
+class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpClient, proxyProvider: RotatingFeedbackAwareProxyProvider) : FeedbackAwareCallManager(okHttpClient, proxyProvider) {
 
     override fun newCall(request: Request): Call {
         if (!proxyConfig.enabled)
@@ -74,8 +74,12 @@ class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpC
         return super.newCall(request)
     }
 
-    fun providerRatio(): Pair<Int, Int>{
+    fun providerRatio(): Pair<Int, Int> {
         return (feedbackAwareProxyProvider as RotatingFeedbackAwareProxyProvider).ratio()
+    }
+
+    fun supplyInfo(): Map<Proxy, Long> {
+        return (feedbackAwareProxyProvider as RotatingFeedbackAwareProxyProvider).supplyInfo()
     }
 
 }
