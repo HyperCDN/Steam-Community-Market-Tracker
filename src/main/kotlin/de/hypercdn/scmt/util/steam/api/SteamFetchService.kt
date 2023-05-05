@@ -34,8 +34,10 @@ class SteamFetchService @Autowired constructor(
             .url("https://raw.githubusercontent.com/dgibbs64/SteamCMD-AppID-List/main/steamcmd_appid.json")
             .build()
         proxyClient.newCall(request).execute().use {
-            if (!it.isSuccessful)
+            if (!it.isSuccessful) {
+                if (it.code == 429) log.warn("Encountered 429 response: ${proxyClient.providerRatio().first} available, ${proxyClient.providerRatio().second} disabled")
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
+            }
             return objectMapper
                 .readTree(it.body.string())
                 .get("applist")
@@ -57,8 +59,10 @@ class SteamFetchService @Autowired constructor(
             .url("https://steamcommunity.com/market/priceoverview/?appid=${appId}&market_hash_name=${URLEncoder.encode(name, Charsets.UTF_8)}&currency=${currency}")
             .build()
         proxyClient.newCall(request).execute().use {
-            if (!it.isSuccessful)
+            if (!it.isSuccessful) {
+                if (it.code == 429) log.warn("Encountered 429 response: ${proxyClient.providerRatio().first} available, ${proxyClient.providerRatio().second} disabled")
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
+            }
             val json = objectMapper.readTree(it.body.string())
             if (json.get("success")?.asBoolean() != true)
                 throw HttpFetchException(it.code, "Body indicated failure for ${request.url}")
@@ -90,8 +94,10 @@ class SteamFetchService @Autowired constructor(
             .url("https://steamcommunity.com/market/search/render/?appid=${appId}&norender=1&start=${start}&count=${count}")
             .build()
         proxyClient.newCall(request).execute().use {
-            if (!it.isSuccessful)
+            if (!it.isSuccessful) {
+                if (it.code == 429) log.warn("Encountered 429 response: ${proxyClient.providerRatio().first} available, ${proxyClient.providerRatio().second} disabled")
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
+            }
             return objectMapper
                 .readTree(it.body.string())
                 .get("results")
@@ -119,8 +125,10 @@ class SteamFetchService @Autowired constructor(
             .url("https://steamcommunity.com/inventory/$userId/$appId/2?l=$language&count=$count")
             .build()
         proxyClient.newCall(request).execute().use {
-            if (!it.isSuccessful)
+            if (!it.isSuccessful) {
+                if (it.code == 429) log.warn("Encountered 429 response: ${proxyClient.providerRatio().first} available, ${proxyClient.providerRatio().second} disabled")
                 throw HttpFetchException(it.code, "Failed to fetch url ${request.url} with code ${it.code}")
+            }
             val payload = objectMapper.readTree(it.body.string())
             val assets = payload.get("assets").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }
             val descriptions = payload.get("descriptions").elements().asSequence().associateBy { e -> e.get("classid").asLong() to e.get("instanceid").asLong() }

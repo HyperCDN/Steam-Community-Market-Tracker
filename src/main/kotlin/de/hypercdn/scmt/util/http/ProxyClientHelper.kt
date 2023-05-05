@@ -74,4 +74,8 @@ class SCMTProxiedCallManager(val proxyConfig: ProxyConfig, okHttpClient: OkHttpC
         return super.newCall(request)
     }
 
+    fun providerRatio(): Pair<Int, Int>{
+        return (feedbackAwareProxyProvider as RotatingFeedbackAwareProxyProvider).ratio()
+    }
+
 }

@@ -79,7 +79,7 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 
 	implementation("io.github.HyperCDN:sockslib:ce6723d340996386067261e53928dc53f078a3b7")
-	implementation("io.github.HyperCDN:okhttp-ktx:e0f7b534b9066258141a24feff788323a6e286c8")
+	implementation("io.github.HyperCDN:okhttp-ktx:3f07a1a6db0251b03120f13b034d36af12de0a47")
 }
 
 tasks.withType<KotlinCompile> {
