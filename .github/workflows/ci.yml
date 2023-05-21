@@ -58,9 +58,8 @@ jobs:
 
       - name: Docker Build & Push
         uses: docker/build-push-action@v3
-        working-directory: ./backend
         with:
-          context: .
+          context: ./backend
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
