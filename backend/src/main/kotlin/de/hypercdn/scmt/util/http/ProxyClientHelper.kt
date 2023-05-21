@@ -38,7 +38,7 @@ class SCMTProxyClientHelper @Autowired constructor(
         }
 
         val handlingRules = HashMap<DisableStrategy, () -> EnableStrategy>().apply {
-            put(disableOnStatusCode(429), { enableAfter(6.hours) })
+            put(disableOnStatusCode(429), { enableAfter(12.hours) })
             put(disableOnStatusCode(403), { enableAfter(24.hours) })
             put(disableOnException(), { enableAfter(1.hours) })
         }
