@@ -17,9 +17,9 @@ steam-community-market-tracker:
     untrack-on-no-found-items: true
     delete-not-found-app: false
   item-search: # search for new items 1min after startup and every hour. previous update must be older than 24 hours. disable tracking for items not found in sweep
-    update-on-startup: true
-    update-on-startup-delay: 1m
-    update-on-cron: true
+    update-on-startup: false
+    update-on-startup-delay: 0m
+    update-on-cron: false
     cron: "0 0 */1 * * *" # every hour
     no-update-before: 24h
     track-by-default: false
@@ -27,24 +27,19 @@ steam-community-market-tracker:
     delete-not-found-entities: false
   item-price-search: # search for item prices 15min after startup and every hour. previous update must be older than 12 hours
     update-on-startup: true
-    update-on-startup-delay: 15m
-    update-on-cron: true
+    update-on-startup-delay: 0m
+    update-on-cron: false
     cron: "0 0 */1 * * *" #  every hour
     no-update-before: 24h
   inventory-search: # search for inventories 5min after startup and every hour. previous update must be older than 12 hours
-    update-on-startup: true
-    update-on-startup-delay: 5m
-    update-on-cron: true
+    update-on-startup: false
+    update-on-startup-delay: 0m
+    update-on-cron: false
     cron: "0 0 */1 * * *" # every hour
     no-update-before: 24h
   proxy:
     enabled: false
     proxies: # only socks5 proxies
-      - hostname:
-        port:
-        username:
-        password:
-
 
 spring:
   # user pass for basic auth endpoints
@@ -55,7 +50,7 @@ spring:
   # configure database
   datasource:
     url: jdbc:postgresql://localhost:5432/scmt
-#    url: jdbc:postgresql://steam-community-market-tracker-db:5432/scmt
+    #    url: jdbc:postgresql://steam-community-market-tracker-db:5432/scmt
     username: scmt
     password: scmtsupersecret
 springdoc:
@@ -65,4 +60,4 @@ springdoc:
     enabled: false # exposes swagger ui on /docs/swagger-ui to view api docs
 logging:
   level:
-    root: info
+    root: debug

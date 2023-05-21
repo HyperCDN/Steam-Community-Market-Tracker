@@ -15,13 +15,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - run: chmod +x ./gradlew
+      working-directory: ./backend
     - uses: gradle/wrapper-validation-action@v1
+      working-directory: ./backend
     - uses: gradle/gradle-build-action@v2
+      working-directory: ./backend
       with:
         arguments: bootJar --no-daemon
     - run: ls build/libs/
+      working-directory: ./backend
     - run: mv -- build/libs/**.jar build/libs/SCMT.jar
-    
+      working-directory: ./backend
+
     - uses: docker/metadata-action@v4
       id: meta
       with:
@@ -44,6 +49,7 @@ jobs:
         echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
         echo "BUILD_TIME=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
     - uses: docker/build-push-action@v3
+      working-directory: ./backend
       with:
         context: .
         platforms: linux/amd64
