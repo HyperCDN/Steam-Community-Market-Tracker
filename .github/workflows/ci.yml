@@ -5,58 +5,67 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-application:
+  build-api-docker:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - run: chmod +x ./gradlew
-      working-directory: ./backend
-    - uses: gradle/wrapper-validation-action@v1
-      working-directory: ./backend
-    - uses: gradle/gradle-build-action@v2
-      working-directory: ./backend
-      with:
-        arguments: bootJar --no-daemon
-    - run: ls build/libs/
-      working-directory: ./backend
-    - run: mv -- build/libs/**.jar build/libs/SCMT.jar
-      working-directory: ./backend
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - uses: docker/metadata-action@v4
-      id: meta
-      with:
-        images: |
-          ghcr.io/hypercdn/scmt
-        tags: |
-          type=ref,event=branch
-          type=ref,event=tag
-          type=ref,event=pr
-          type=sha,prefix=
-    - uses: docker/setup-qemu-action@v2
-    - uses: docker/setup-buildx-action@v2
-    - uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - run: |
-        echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
-        echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        echo "BUILD_TIME=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
-    - uses: docker/build-push-action@v3
-      working-directory: ./backend
-      with:
-        context: .
-        platforms: linux/amd64
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        build-args: |
-          VERSION=${{ env.VERSION }}
-          COMMIT=${{ env.COMMIT }}
-          BUILD_TIME=${{ env.BUILD_TIME }}
+      - name: Making Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+        working-directory: ./backend
+
+      - name: Validating Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+        working-directory: ./backend
+
+      - name: Building Executable Jar
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: bootJar --no-daemon
+
+      - name: Move Build Output
+        run: mv -- build/libs/**.jar build/libs/SCMT.jar
+        working-directory: ./backend
+
+      - uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: |
+            ghcr.io/hypercdn/scmt
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha,prefix=
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: |
+          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
+          echo "COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(date --rfc-3339=seconds)" >> $GITHUB_ENV
+
+      - name: Docker Build & Push
+        uses: docker/build-push-action@v3
+        working-directory: ./backend
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ env.VERSION }}
+            COMMIT=${{ env.COMMIT }}
+            BUILD_TIME=${{ env.BUILD_TIME }}
